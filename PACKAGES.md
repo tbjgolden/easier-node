@@ -1,143 +1,40 @@
-Key:
+# Reliable npm packages
 
-- Y - add (at least partly)
-- N - will not add
-- ? - not sure, needs further consideration
-- ! - will use native equivalent instead
-- & - will not include package, but will include helper
-
----
-
-- [?] sindresorhus stuff
-- [?] generally compression of (tr zp gz)
-
-# Bindings
-
-- [&] image manip bundings? jimp, sharp
-- [&] swc, esbuild, jest, prettier helpers
-
-- [&] babel-core
-- [&] eslint
-- [&] typescript
-- [&] postcss
-- [&] prettier
-- [&] puppeteer
-- [&] rollup
-- [&] lint-staged
-- [&] acorn (maybe, and css-tree also)
-- [&] husky
-
-# None
-
-- [?] deep-diff
-- [?] tildify
-- [?] content-type
-- [?] serialize-javascript
-- [?] require-all
-- [?] immutability-helper
-- [?] columnify
-
-# MAYBE
-
-- [?] lodash
-- [?] commander
-- [?] debug
-- [?] underscore
-- [?] yargs (see commander)
-- [?] minimist (see yargs)
-- [?] body-parser
-- [?] winston (see debug)
-- [?] zone.js
-- [?] node-fetch
-- [?] node-sass
-- [?] xml2js
-- [?] chokidar
-- [?] optimist (see minimist)
-- [?] morgan (see winston)
-- [?] meow (see optimist)
-- [?] jsonwebtoken
-- [?] minimatch (see glob)
-- [?] underscore.string
-- [?] graphql
-- [?] execa
-- [?] opn
-- [?] got
-- [?] dotenv-expand
-- [?] highlight.js
-- [?] progress
-- [?] iconv-lite
-- [?] archiver
-- [?] graceful-fs
-- [?] ip
-- [?] http-proxy
-- [?] ini
-- [?] nopt (see meow)
-- [?] @oclif/command
-- [?] node-notifier
-- [?] htmlparser2
-- [?] filesize
-- [?] clear
-- [?] prismjs
-- [?] require-dir
-- [?] configstore
-- [?] download
-- [?] traverse
-- [?] json-stringify-safe
-- [?] github (actions)
-- [?] boxen
-- [?] elliptic
-- [?] http-errors
-- [?] walk (maybe bfs, dfs?)
-- [?] faker
-- [?] image-size
-- [?] micromatch (see minimatch)
-- [?] cli-spinner
-- [?] parse5
-- [?] broccoli-funnel
-- [?] listr
-- [?] randomstring
-- [?] node-emoji
-- [?] node-schedule
-- [?] figures
-- [?] node-forge
-- [?] plist
-- [?] requireindex
-- [?] svgo
-- [?] html-entities
-- [?] he (html-entities)
-- [?] supports-color
-- [?] mathjs
-- [?] cuid
-- [?] install
-- [?] basic-auth
-- [?] memory-fs
-- [?] file-type
-- [?] clipboard
-- [?] clipboardy (check with clipboard)
-- [?] sanitize-filename
-- [?] needle
-- [?] keycode
-- [?] convert-source-map
-- [?] stack-trace (wow lovely)
-- [?] memoize-one
-- [?] pretty-error
-- [?] decompress
-- [?] is
-- [?] follow-redirects
-- [?] http-status
-- [?] fast-glob (like minimatch)
-- [?] fuse.js (same thing as fuzzy?)
-- [?] fuzzy
-- [?] word-wrap
-- [?] inquirer-autocomplete-prompt
-- [?] xpath
+- most packages from:
+  - sindresorhus
+  - kentcdodds
+  - FredKSchott
+  - yyx990803
+- projects with each of:
+  - a large number of recent contributors
+  - a large number of recent downloads
+  - follows semver
+  - unlikely to pivot in future major versions
+  - spec-compliant, if applicable
 
 # YES
 
+- [Y] node:child_process
+- [Y] node:crypto
+- [Y] node:dns
+- [Y] node:fs
+- [Y] node:http
+- [Y] node:module
+- [Y] node:net
+- [Y] node:path
+- [Y] node:querystring
+- [Y] node:readline
+- [Y] node:string_decoder
+- [Y] node:timers
+- [Y] node:url
+- [Y] node:util
+- [Y] node:zlib
+- [Y] node:process
+- [Y] node:worker_threads
+- [Y] (english audit)
 - [Y] toml
 - [Y] cosmiconfig
 - [Y] once, debounce, throttle
-- [Y] lang audit
 - [Y] chalk
 - [Y] fs-extra
 - [Y] glob (respect gitignore?)
@@ -214,7 +111,6 @@ Key:
 - [!] object-assign
 - [!] co
 - [!] qs
-- [!] fs
 - [!] extend
 - [!] deepmerge
 - [!] query-string
@@ -222,7 +118,6 @@ Key:
 - [!] md5
 - [!] crypto-js
 - [!] ncp
-- [!] url
 - [!] merge
 - [!] url-parse
 - [!] url-join
@@ -231,6 +126,126 @@ Key:
 - [!] flat
 - [!] md5-file
 - [!] left-pad
+
+# Bindings
+
+- [&] (image manip bundings? jimp, sharp)
+- [&] (swc, esbuild, jest, prettier helpers)
+- [&] babel-core
+- [&] eslint
+- [&] typescript
+- [&] postcss
+- [&] prettier
+- [&] puppeteer
+- [&] rollup
+- [&] lint-staged
+- [&] acorn (maybe, and css-tree also)
+- [&] husky
+- [&] native tar (use node:zlib)
+- [&] native zip (and detection for support)
+
+# MAYBE
+
+- [?] node:tty
+- [?] lodash
+- [?] commander
+- [?] debug
+- [?] underscore
+- [?] yargs (see commander)
+- [?] minimist (see yargs)
+- [?] body-parser
+- [?] winston (see debug)
+- [?] zone.js
+- [?] node-fetch
+- [?] node-sass
+- [?] xml2js
+- [?] chokidar
+- [?] optimist (see minimist)
+- [?] morgan (see winston)
+- [?] meow (see optimist)
+- [?] jsonwebtoken
+- [?] minimatch (see glob)
+- [?] underscore.string
+- [?] graphql
+- [?] execa
+- [?] opn
+- [?] got
+- [?] dotenv-expand
+- [?] highlight.js
+- [?] progress
+- [?] iconv-lite
+- [?] archiver
+- [?] graceful-fs
+- [?] ip
+- [?] http-proxy
+- [?] ini
+- [?] nopt (see meow)
+- [?] @oclif/command
+- [?] node-notifier
+- [?] htmlparser2
+- [?] filesize
+- [?] clear
+- [?] prismjs
+- [?] require-dir
+- [?] configstore
+- [?] download
+- [?] traverse
+- [?] json-stringify-safe
+- [?] github (actions)
+- [?] boxen
+- [?] elliptic
+- [?] http-errors
+- [?] walk (maybe bfs, dfs?)
+- [?] faker
+- [?] image-size
+- [?] micromatch (see minimatch)
+- [?] cli-spinner (see ora)
+- [?] parse5
+- [?] broccoli-funnel
+- [?] listr
+- [?] randomstring
+- [?] node-emoji
+- [?] node-schedule
+- [?] figures
+- [?] node-forge
+- [?] plist
+- [?] requireindex
+- [?] svgo
+- [?] html-entities
+- [?] he (html-entities)
+- [?] supports-color
+- [?] mathjs
+- [?] cuid
+- [?] install
+- [?] basic-auth
+- [?] memory-fs
+- [?] file-type
+- [?] clipboard
+- [?] clipboardy (check with clipboard)
+- [?] sanitize-filename
+- [?] needle
+- [?] keycode
+- [?] deep-diff
+- [?] tildify
+- [?] content-type
+- [?] serialize-javascript
+- [?] require-all
+- [?] immutability-helper
+- [?] columnify
+- [?] convert-source-map
+- [?] stack-trace (wow lovely)
+- [?] memoize-one
+- [?] pretty-error
+- [?] decompress
+- [?] is
+- [?] follow-redirects
+- [?] http-status
+- [?] fast-glob (like minimatch)
+- [?] fuse.js (same thing as fuzzy?)
+- [?] fuzzy
+- [?] word-wrap
+- [?] inquirer-autocomplete-prompt
+- [?] xpath
 
 # NOs (but cool)
 
@@ -244,6 +259,27 @@ Key:
 
 # NOs
 
+- [N] node:assert
+- [N] node:buffer
+- [N] node:cluster
+- [N] node:console
+- [N] node:dgram
+- [N] node:domain
+- [N] node:events
+- [N] node:https
+- [N] node:os
+- [N] node:punycode
+- [N] node:repl
+- [N] node:stream
+- [N] node:sys
+- [N] node:tls
+- [N] node:vm
+- [N] node:v8
+- [N] node:inspector
+- [N] node:async_hooks
+- [N] node:http2
+- [N] node:perf_hooks
+- [N] node:trace_events
 - [N] react
 - [N] express
 - [N] prop-types
