@@ -22,7 +22,7 @@
     ".lintstagedrc.cjs": true,
     "package-lock.json": true,
     "tsconfig.json": true,
-    "LICENSE": true,
+    "LICENSE.txt": true,
     "coverage": true
   }
 }

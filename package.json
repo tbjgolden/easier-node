@@ -1,9 +1,17 @@
 {
   "name": "easier-node",
+  "description": "Node.js, but with a modern API",
   "version": "0.0.0",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": "^16.13.0"
+  },
+  "os": [
+    "!win32"
+  ],
   "browser": {
     "./dist/cjs/index.js": "./dist/cjs/index.js",
     "./dist/esm/index.js": "./dist/esm/index.js"
