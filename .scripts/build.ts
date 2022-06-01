@@ -50,7 +50,7 @@ const main = async () => {
       entryPoints: ["./cli/index.ts"],
       minify: true,
       bundle: true,
-      outfile: "./dist/easy-mode",
+      outfile: "./dist/easier-node",
       platform: "node",
       target: "es2017",
       logLevel: "info",

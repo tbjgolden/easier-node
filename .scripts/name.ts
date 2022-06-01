@@ -11,7 +11,7 @@ const escapeRegExp = (str: string): string => {
   return str.replace(/[$()*+.?[\\\]^{|}]/g, "\\$&"); // $& means the whole matched string
 };
 
-const currentName = "easy-mode";
+const currentName = "easier-node";
 
 const main = async () => {
   const projectRoot = await getPackageRoot();
@@ -54,7 +54,7 @@ const main = async () => {
     }
   });
 
-  const re = new RegExp(escapeRegExp("easy-mode"), "g");
+  const re = new RegExp(escapeRegExp("easier-node"), "g");
   for (const filePath of files) {
     fs.writeFileSync(filePath, fs.readFileSync(filePath, "utf8").replace(re, result));
   }
