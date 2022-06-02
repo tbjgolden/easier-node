@@ -13,13 +13,6 @@
   "os": [
     "!win32"
   ],
-  "browser": {
-    "./dist/cjs/index.js": "./dist/cjs/index.js",
-    "./dist/esm/index.js": "./dist/esm/index.js"
-  },
-  "bin": {
-    "easier-node": "./dist/easier-node"
-  },
   "scripts": {
     "help": "esr ./.scripts/help.ts",
     "help:name": "echo 'Rename npm project'",

@@ -1,0 +1,1260 @@
+# Reliable npm packages
+
+- most packages from:
+  - sindresorhus
+  - kentcdodds
+  - FredKSchott
+  - yyx990803
+  - jonschlinkert
+  - Qix-
+  - mojombo
+- projects with each of:
+  - a large number of recent contributors
+  - a large number of recent downloads
+  - follows semver
+  - unlikely to pivot in future major versions
+  - either small, or built with TS
+  - spec-compliant, if applicable
+
+# Functions given short JSDoc description
+
+JSDoc format /\*\* desc \*/
+
+# If a library is <400 bytes minified, bundle
+
+(About 20 lines of code or less)
+
+At this point, more risk comes from importing it as a dependency than bundling it, imo.
+
+# TODOs:
+
+---
+
+# Stage 1:
+
+## node builtins
+
+### fs / io
+
+fs calls use trash, do not follow links
+
+- [ ] print
+- [ ] async readInput
+- [ ] async readInputUntil
+- [ ] async readFile
+- [ ] async readJSONFile // supports JSON5 by default
+- [ ] async writeFile
+- [ ] async writeJSONFile // supports JSON5 by default
+- [ ] async appendFile
+- [ ] async appendFileCSV // accepts obj, ignores trailing newlines
+- [ ] async listFilesInFolder
+- [ ] async listFoldersInFolder
+- [ ] async listFilesWithinFolder
+- [ ] async listFoldersWithinFolder
+- [ ] async perMatch // using some glob style stuff
+- [ ] async perFileMatch
+- [ ] async perFolderMatch
+- [ ] async ensureFolder
+- [ ] async ensureFile
+- [ ] async emptyFolder
+- [ ] async renameFile
+- [ ] async renameFolder
+- [ ] async moveFile
+- [ ] async moveFolder
+- [ ] async copyFile
+- [ ] async copyFolder
+- [ ] async deleteFile
+- [ ] async deleteFolder
+- [ ] async isFile
+- [ ] async isFolder
+- [ ] async - some stats helper fns
+- [ ] $CWD
+- [ ] $THIS_FILE_PATH (not sure if possible, perhaps requires setFile)
+- [ ] $THIS_FOLDER_PATH (not sure if possible, perhaps requires setFile)
+
+### child_process
+
+- [ ] execa (wrappers?)
+- [ ] spawn (w/ pipe?)
+- [ ] perhaps a helper for running node (perhaps with swc)
+
+### fetch/http
+
+- [ ] got (wrappers?)
+
+### url
+
+- [ ] function to inferPort from a url
+- [ ] sindresorhud normalize url?
+- [ ] joinURLs
+- [ ] resolveURLs
+
+### path
+
+- [ ] joinPaths
+- [ ] resolvePaths
+- [ ] parse
+- [ ] normalize
+- [ ] split?
+
+### dns
+
+- [ ] lookup
+
+### http
+
+- [ ] serveFile
+- [ ] serveDirectory
+- [ ] serveStaticSite (scans files to understand how to serve)
+
+### net
+
+- [ ] isIP
+- [ ] isIPv4
+- [ ] isIPv6
+
+### readline
+
+- [ ] perLine (iterator)
+
+### string_decoder
+
+- [ ] toUTF8
+- [ ] toBase64
+- [ ] toBase64URL
+- [ ] toHex
+- [ ] fromUTF8
+- [ ] fromBase64
+- [ ] fromBase64URL
+- [ ] fromHex
+
+### timers
+
+- [ ] wait
+- [ ] waitUntil
+- [ ] debounce
+- [ ] throttle
+- [ ] ? timeout
+- [ ] ? interval
+- [ ] ? every
+
+### util
+
+- [ ] pretty
+
+### zlib
+
+- [ ] compressGzip
+- [ ] compressBrotli
+- [ ] decompressGzip
+- [ ] decompressBrotli
+
+### process
+
+- [ ] isLinux
+- [ ] isMac
+- [ ] isX64
+- [ ] isARM64
+
+### worker_threads
+
+- [ ] parallelise?
+
+### crypto
+
+- [ ] hashFastHex
+- [ ] hashSecureHex
+
+### tty
+
+- [ ] isTerminal
+- [ ] isInteractive
+
+## misc
+
+- [ ] cosmiconfig, but for js, cjs, mjs, ts, json+
+- [ ] lightweight version of chalk
+- [ ] some kind of glob/minimatch
+- [ ] lightweight inquirer
+- [ ] uuid
+- [ ] semver parser
+- [ ] dotenv env parser
+- [ ] cli progress (spinner, progress bar)
+- [ ] some tolerant json parser / bindings
+- [ ] validator
+- [ ] lru-cache
+
+---
+
+# Stage 2.
+
+# YES
+
+- [x] node:fs
+- [x] node:child_process
+- [x] node:path
+- [x] node:url
+- [x] node:dns
+- [x] node:http
+- [x] node:module
+- [x] node:net
+- [x] node:readline
+- [x] node:string_decoder
+- [x] node:timers
+- [x] node:util
+- [x] node:zlib
+- [x] node:process
+- [x] node:worker_threads
+- [x] node:crypto
+- [x] node:tty
+- [x] cosmiconfig
+- [x] once, debounce, throttle
+- [x] chalk
+- [x] fs-extra
+- [x] glob (respect gitignore?)
+- [x] inquirer
+- [x] uuid
+- [x] semver
+- [x] dotenv
+- [x] ora
+- [x] marked (albeit commonmark)
+- [x] validator
+- [x] lru-cache
+- [ ] cli-table
+- [ ] clone
+- [ ] jsonfile (also csv)
+- [ ] serve-static
+- [ ] date-fns (parseISOString, basic timezone manip)
+- [ ] events
+- [ ] strip-ansi
+- [ ] deep-equal
+- [ ] which
+- [ ] html-minifier
+- [ ] recursive-readdir
+- [ ] cookie
+- [ ] ms
+- [ ] escape-string-regexp
+- [ ] graphql-tag
+- [ ] validate-npm-package-name
+- [ ] app-root-path
+- [ ] deep-extend
+- [ ] diff
+- [ ] find-up
+- [ ] json-stable-stringify
+- [ ] path-exists
+- [ ] read-pkg-up
+- [ ] escape-html
+- [ ] broccoli-merge-trees
+- [ ] object-path
+- [ ] read-pkg
+- [ ] object-hash
+- [ ] text-table
+- [ ] strip-json-comments
+- [ ] bytes
+- [ ] gzip-size
+- [ ] csv-parse
+- [ ] cosmiconfig
+- [ ] slug
+- [ ] base-64
+- [ ] common-tags
+- [ ] command-exists
+- [ ] generic-pool
+- [ ] shell-quote
+- [ ] nanoid
+- [ ] sanitize-html
+- [ ] http-status-codes
+- [ ] pretty-ms
+- [ ] normalize-url
+
+# YES, but use native instead
+
+- [ ] utf8
+- [ ] type-is
+- [ ] request
+- [ ] async
+- [ ] moment
+- [ ] bluebird
+- [ ] axios
+- [ ] mkdirp
+- [ ] through2
+- [ ] rimraf
+- [ ] q
+- [ ] object-assign
+- [ ] co
+- [ ] qs
+- [ ] extend
+- [ ] deepmerge
+- [ ] query-string
+- [ ] tmp
+- [ ] md5
+- [ ] crypto-js
+- [ ] ncp
+- [ ] merge
+- [ ] url-parse
+- [ ] url-join
+- [ ] user-home
+- [ ] shallowequal
+- [ ] flat
+- [ ] md5-file
+- [ ] left-pad
+
+# Bindings
+
+- [ ] (image manip bundings? jimp, sharp)
+- [ ] (swc, esbuild, jest, prettier helpers)
+- [ ] babel-core
+- [ ] eslint
+- [ ] typescript
+- [ ] postcss
+- [ ] prettier
+- [ ] puppeteer
+- [ ] rollup
+- [ ] lint-staged
+- [ ] acorn (maybe, and css-tree also)
+- [ ] husky
+- [ ] native tar (use node:zlib)
+- [ ] native zip (and detection for support)
+- [ ] commonmark, gfm
+
+# MAYBE
+
+- [ ] lodash
+- [ ] commander
+- [ ] debug
+- [ ] underscore
+- [ ] yargs (see commander)
+- [ ] minimist (see yargs)
+- [ ] body-parser
+- [ ] winston (see debug)
+- [ ] zone.js
+- [ ] node-fetch
+- [ ] node-sass
+- [ ] xml2js
+- [ ] chokidar
+- [ ] optimist (see minimist)
+- [ ] morgan (see winston)
+- [ ] meow (see optimist)
+- [ ] jsonwebtoken
+- [ ] minimatch (see glob)
+- [ ] underscore.string
+- [ ] graphql
+- [ ] execa
+- [ ] opn
+- [ ] got
+- [ ] dotenv-expand
+- [ ] highlight.js
+- [ ] progress
+- [ ] iconv-lite
+- [ ] archiver
+- [ ] graceful-fs
+- [ ] ip
+- [ ] http-proxy
+- [ ] ini
+- [ ] nopt (see meow)
+- [ ] @oclif/command
+- [ ] node-notifier
+- [ ] htmlparser2
+- [ ] filesize
+- [ ] clear
+- [ ] prismjs
+- [ ] require-dir
+- [ ] configstore
+- [ ] download
+- [ ] traverse
+- [ ] json-stringify-safe
+- [ ] github (actions)
+- [ ] boxen
+- [ ] elliptic
+- [ ] http-errors
+- [ ] walk (maybe bfs, dfs?)
+- [ ] faker
+- [ ] image-size
+- [ ] micromatch (see minimatch)
+- [ ] cli-spinner (see ora)
+- [ ] parse5
+- [ ] broccoli-funnel
+- [ ] listr
+- [ ] randomstring
+- [ ] node-emoji
+- [ ] node-schedule
+- [ ] figures
+- [ ] node-forge
+- [ ] plist
+- [ ] requireindex
+- [ ] svgo
+- [ ] html-entities
+- [ ] he (html-entities)
+- [ ] supports-color
+- [ ] mathjs
+- [ ] cuid
+- [ ] install
+- [ ] basic-auth
+- [ ] memory-fs
+- [ ] file-type
+- [ ] clipboard
+- [ ] clipboardy (check with clipboard)
+- [ ] sanitize-filename
+- [ ] needle
+- [ ] keycode
+- [ ] deep-diff
+- [ ] tildify
+- [ ] content-type
+- [ ] serialize-javascript
+- [ ] require-all
+- [ ] immutability-helper
+- [ ] columnify
+- [ ] convert-source-map
+- [ ] stack-trace (wow lovely)
+- [ ] memoize-one
+- [ ] pretty-error
+- [ ] decompress
+- [ ] is
+- [ ] follow-redirects
+- [ ] http-status
+- [ ] fast-glob (like minimatch)
+- [ ] fuse.js (same thing as fuzzy?)
+- [ ] fuzzy
+- [ ] word-wrap
+- [ ] inquirer-autocomplete-prompt
+- [ ] xpath
+
+# NOs (but cool)
+
+- [x] mz (use as inspiration for this)
+- [x] hammerjs (but good to know about)
+- [x] serialport (but good to know about)
+- [x] gm (bindings to sharp/image.js instead?)
+- [x] blessed (wow this is cool)
+- [x] deasync (also cool)
+- [x] fastclick (cool!)
+
+# NOs
+
+## english
+
+- [x] read (md? txt?) file for english words
+      (smart word boundaries; can read interpret hyphens, camelcase, etc)
+- [x] isWordEnglish
+      (any dialect)
+- [x] isWordCommonEnglish
+      (i.e. words with same/similar meanings and spellings across all major English dialects)
+- [x] pluralize
+
+---
+
+- [x] node:assert
+- [x] node:buffer
+- [x] node:cluster
+- [x] node:console
+- [x] node:dgram
+- [x] node:domain
+- [x] node:querystring
+- [x] node:events
+- [x] node:https
+- [x] node:os
+- [x] node:punycode
+- [x] node:repl
+- [x] node:stream
+- [x] node:sys
+- [x] node:tls
+- [x] node:vm
+- [x] node:v8
+- [x] node:inspector
+- [x] node:async_hooks
+- [x] node:http2
+- [x] node:perf_hooks
+- [x] node:trace_events
+- [x] react
+- [x] express
+- [x] prop-types
+- [x] react-dom
+- [x] vue
+- [x] tslib
+- [x] colors
+- [x] webpack
+- [x] classnames
+- [x] rxjs
+- [x] babel-runtime
+- [x] jquery
+- [x] yeoman-generator
+- [x] core-js
+- [x] babel-loader
+- [x] cheerio
+- [x] css-loader
+- [x] shelljs
+- [x] @types/node
+- [x] @angular/core
+- [x] style-loader
+- [x] @angular/common
+- [x] redux
+- [x] babel-eslint
+- [x] gulp
+- [x] gulp-util
+- [x] file-loader
+- [x] @angular/platform-browser
+- [x] @babel/runtime
+- [x] handlebars
+- [x] eslint-plugin-import
+- [x] @angular/compiler
+- [x] eslint-plugin-react
+- [x] aws-sdk
+- [x] yosay
+- [x] url-loader
+- [x] @angular/forms
+- [x] webpack-dev-server
+- [x] @angular/platform-browser-dynamic
+- [x] mocha
+- [x] html-webpack-plugin
+- [x] socket.io
+- [x] ws
+- [x] babel-preset-es2015
+- [x] postcss-loader
+- [x] ember-cli-babel
+- [x] babel-polyfill
+- [x] @angular/router
+- [x] shortid
+- [x] ramda
+- [x] react-redux
+- [x] @babel/core
+- [x] @angular/http
+- [x] ejs
+- [x] coffee-script
+- [x] superagent
+- [x] request-promise
+- [x] autoprefixer
+- [x] path
+- [x] mongodb
+- [x] chai
+- [x] mongoose
+- [x] bootstrap
+- [x] jest
+- [x] sass-loader
+- [x] redis
+- [x] vue-router
+- [x] eslint-plugin-jsx-a11y
+- [x] nan
+- [x] promise
+- [x] @angular/animations
+- [x] less
+- [x] immutable
+- [x] loader-utils
+- [x] extract-text-webpack-plugin
+- [x] mime
+- [x] @alifd/next
+- [x] styled-components
+- [x] resolve
+- [x] reflect-metadata
+- [x] babel-preset-react
+- [x] react-router-dom
+- [x] cookie-parser
+- [x] whatwg-fetch
+- [x] babel-preset-env
+- [x] babel-jest
+- [x] mysql
+- [x] joi
+- [x] eslint-loader
+- [x] react-dev-utils
+- [x] node-uuid
+- [x] es6-promise
+- [x] cross-spawn
+- [x] case-sensitive-paths-webpack-plugin
+- [x] uglify-js
+- [x] cors
+- [x] eslint-plugin-flowtype
+- [x] react-router
+- [x] @babel/preset-env
+- [x] socket.io-client
+- [x] npm
+- [x] webpack-manifest-plugin
+- [x] koa
+- [x] isomorphic-fetch
+- [x] babel-cli
+- [x] del
+- [x] postcss-flexbugs-fixes
+- [x] compression
+- [x] update-notifier
+- [x] babel-preset-react-app
+- [x] jade
+- [x] prompt
+- [x] gulp-rename
+- [x] angular
+- [x] browserify
+- [x] eslint-config-react-app
+- [x] vuex
+- [x] invariant
+- [x] jsdom
+- [x] @types/react
+- [x] redux-thunk
+- [x] mini-css-extract-plugin
+- [x] globby
+- [x] pg
+- [x] ajv
+- [x] xtend
+- [x] ember-cli-htmlbars
+- [x] babel-plugin-transform-runtime
+- [x] nodemailer
+- [x] source-map-support
+- [x] express-session
+- [x] d3
+- [x] less-loader
+- [x] fsevents
+- [x] babel-preset-stage-0
+- [x] download-git-repo
+- [x] font-awesome
+- [x] open
+- [x] passport
+- [x] @types/lodash
+- [x] grunt
+- [x] path-to-regexp
+- [x] mustache
+- [x] inherits
+- [x] request-promise-native
+- [x] through
+- [x] connect
+- [x] raf
+- [x] react-scripts
+- [x] readable-stream
+- [x] @babel/polyfill
+- [x] optimize-css-assets-webpack-plugin
+- [x] bunyan
+- [x] gulp-uglify
+- [x] koa-router
+- [x] lodash.merge
+- [x] moment-timezone
+- [x] figlet
+- [x] history
+- [x] readline-sync
+- [x] log4js
+- [x] webpack-merge
+- [x] babel-register
+- [x] eslint-config-airbnb
+- [x] @babel/plugin-proposal-class-properties
+- [x] querystring
+- [x] tslint
+- [x] pug
+- [x] config
+- [x] source-map
+- [x] antd
+- [x] concat-stream
+- [x] element-ui
+- [x] lodash.get
+- [x] @babel/preset-react
+- [x] serve-favicon
+- [x] stylus
+- [x] esprima
+- [x] sequelize
+- [x] babel-plugin-transform-object-rest-spread
+- [x] bindings
+- [x] normalize.css
+- [x] crypto
+- [x] cross-env
+- [x] mime-types
+- [x] event-stream
+- [x] hoist-non-react-statics
+- [x] gulp-concat
+- [x] terser-webpack-plugin
+- [x] json-loader
+- [x] warning
+- [x] bignumber.js
+- [x] eventemitter3
+- [x] webpack-cli
+- [x] cli-color
+- [x] form-data
+- [x] web3
+- [x] gulp-sourcemaps
+- [x] webpack-dev-middleware
+- [x] sw-precache-webpack-plugin
+- [x] react-transition-group
+- [x] multer
+- [x] browser-sync
+- [x] babel
+- [x] dateformat
+- [x] postcss-preset-env
+- [x] uglifyjs-webpack-plugin
+- [x] @polymer/polymer
+- [x] sinon
+- [x] eslint-config-prettier
+- [x] gulp-sass
+- [x] identity-obj-proxy
+- [x] ts-loader
+- [x] react-hot-loader
+- [x] sqlite3
+- [x] popper.js
+- [x] markdown-it
+- [x] vue-template-compiler
+- [x] babel-plugin-transform-class-properties
+- [x] js-beautify
+- [x] log-symbols
+- [x] webpack-hot-middleware
+- [x] copy-webpack-plugin
+- [x] nodemon
+- [x] boom
+- [x] xmldom
+- [x] recompose
+- [x] util
+- [x] pify
+- [x] command-line-args
+- [x] vinyl
+- [x] lodash.debounce
+- [x] ts-node
+- [x] nconf
+- [x] vue-loader
+- [x] @types/express
+- [x] datafire
+- [x] @types/react-dom
+- [x] babel-plugin-transform-decorators-legacy
+- [x] clean-css
+- [x] hoek
+- [x] @babel/plugin-transform-runtime
+- [x] when
+- [x] babel-plugin-named-asset-import
+- [x] postcss-safe-parser
+- [x] bcrypt
+- [x] @material-ui/core
+- [x] @babel/plugin-syntax-dynamic-import
+- [x] nunjucks
+- [x] eslint-plugin-promise
+- [x] react-native
+- [x] lodash.isequal
+- [x] workbox-webpack-plugin
+- [x] amqplib
+- [x] @svgr/webpack
+- [x] color
+- [x] js-cookie
+- [x] temp
+- [x] simple-git
+- [x] cssnano
+- [x] reselect
+- [x] yamljs
+- [x] ioredis
+- [x] koa-static
+- [x] react-app-polyfill
+- [x] react-select
+- [x] firebase
+- [x] bn.js
+- [x] escodegen
+- [x] react-bootstrap
+- [x] babelify
+- [x] helmet
+- [x] eslint-plugin-prettier
+- [x] jest-resolve
+- [x] knex
+- [x] pnp-webpack-plugin
+- [x] gulp-if
+- [x] assert
+- [x] global
+- [x] npmlog
+- [x] backbone
+- [x] raw-loader
+- [x] run-sequence
+- [x] lodash.clonedeep
+- [x] http-proxy-middleware
+- [x] gulp-babel
+- [x] @oclif/config
+- [x] vinyl-fs
+- [x] lodash.throttle
+- [x] passport-local
+- [x] eventemitter2
+- [x] mqtt
+- [x] unique-random-array
+- [x] buffer
+- [x] redux-saga
+- [x] react-router-redux
+- [x] jszip
+- [x] koa-bodyparser
+- [x] async-validator
+- [x] babel-preset-stage-2
+- [x] eslint-config-airbnb-base
+- [x] material-ui
+- [x] clean-webpack-plugin
+- [x] redux-logger
+- [x] html-loader
+- [x] gulp-plumber
+- [x] consolidate
+- [x] pkginfo
+- [x] should
+- [x] change-case
+- [x] @babel/plugin-proposal-object-rest-spread
+- [x] eslint-plugin-node
+- [x] create-react-class
+- [x] postcss-import
+- [x] @angular/cdk
+- [x] toml
+- [x] webpack-bundle-analyzer
+- [x] JSONStream
+- [x] pump
+- [x] babylon
+- [x] mobx
+- [x] adm-zip
+- [x] rc
+- [x] http
+- [x] @angular/material
+- [x] eslint-config-standard
+- [x] eslint-plugin-standard
+- [x] once
+- [x] numeral
+- [x] @typescript-eslint/parser
+- [x] hapi
+- [x] @babel/cli
+- [x] eslint-plugin-react-hooks
+- [x] plugin-error
+- [x] @typescript-eslint/eslint-plugin
+- [x] gulp-autoprefixer
+- [x] istanbul
+- [x] echarts
+- [x] bower
+- [x] resize-observer-polyfill
+- [x] bcryptjs
+- [x] lodash.assign
+- [x] babel-plugin-add-module-exports
+- [x] argparse
+- [x] react-helmet
+- [x] stylelint
+- [x] string
+- [x] protobufjs
+- [x] esm
+- [x] sprintf-js
+- [x] rollup-plugin-node-resolve
+- [x] websocket
+- [x] codemirror
+- [x] bs58
+- [x] googleapis
+- [x] method-override
+- [x] formidable
+- [x] tape
+- [x] karma
+- [x] elasticsearch
+- [x] split
+- [x] safe-buffer
+- [x] rsvp
+- [x] @oclif/plugin-help
+- [x] xlsx
+- [x] tinycolor2
+- [x] lodash-es
+- [x] @babel/plugin-proposal-decorators
+- [x] connect-history-api-fallback
+- [x] @material-ui/icons
+- [x] jsonschema
+- [x] portfinder
+- [x] fbjs
+- [x] css
+- [x] co-prompt
+- [x] restify
+- [x] three
+- [x] metalsmith
+- [x] webpack-node-externals
+- [x] requirejs
+- [x] regenerator-runtime
+- [x] xmlbuilder
+- [x] unzip
+- [x] rollup-plugin-commonjs
+- [x] throttle-debounce
+- [x] cron
+- [x] xmlhttprequest
+- [x] systemjs
+- [x] inflection
+- [x] canvas
+- [x] get-stdin
+- [x] babel-types
+- [x] graphql-tools
+- [x] @types/jest
+- [x] ssh2
+- [x] sax
+- [x] child_process
+- [x] leaflet
+- [x] wrench
+- [x] rx
+- [x] ethereumjs-util
+- [x] enzyme
+- [x] prettyjson
+- [x] bfj
+- [x] gulp-watch
+- [x] redux-actions
+- [x] lit-element
+- [x] discord.js
+- [x] gulp-less
+- [x] jshint
+- [x] vinyl-source-stream
+- [x] send
+- [x] mysql2
+- [x] @types/jquery
+- [x] user
+- [x] slash
+- [x] es6-shim
+- [x] watch
+- [x] debounce
+- [x] d3-scale
+- [x] babel-helper-vue-jsx-merge-props
+- [x] file-saver
+- [x] pull-stream
+- [x] lodash.omit
+- [x] koa-compose
+- [x] chart.js
+- [x] gulp-replace
+- [x] react-intl
+- [x] mobx-react
+- [x] webpack-sources
+- [x] methods
+- [x] jasmine
+- [x] camelcase
+- [x] tar
+- [x] valid-url
+- [x] jest-watch-typeahead
+- [x] react-dnd
+- [x] eslint-plugin-babel
+- [x] friendly-errors-webpack-plugin
+- [x] gulp-template
+- [x] @emotion/core
+- [x] lodash.pick
+- [x] babel-plugin-transform-es2015-modules-commonjs
+- [x] lodash.set
+- [x] watchify
+- [x] estraverse
+- [x] unist-util-visit
+- [x] @fortawesome/fontawesome-svg-core
+- [x] @angular/compiler-cli
+- [x] react-addons-css-transition-group
+- [x] clui
+- [x] babel-plugin-import
+- [x] tslint-react
+- [x] errorhandler
+- [x] electron
+- [x] eslint-plugin-jest
+- [x] vue-hot-reload-api
+- [x] swig
+- [x] jest-pnp-resolver
+- [x] rollup-plugin-babel
+- [x] oauth
+- [x] nedb
+- [x] detect-port
+- [x] liftoff
+- [x] @types/fs-extra
+- [x] get-port
+- [x] stylelint-config-standard
+- [x] gulp-imagemin
+- [x] @babel/register
+- [x] gulp-install
+- [x] node-gyp
+- [x] grunt-contrib-clean
+- [x] pm2
+- [x] polished
+- [x] @fortawesome/free-solid-svg-icons
+- [x] ts-jest
+- [x] react-test-renderer
+- [x] grunt-contrib-watch
+- [x] loglevel
+- [x] on-finished
+- [x] fs-promise
+- [x] levelup
+- [x] nomnom
+- [x] @angular-devkit/core
+- [x] react-dnd-html5-backend
+- [x] react-motion
+- [x] command-line-usage
+- [x] readline
+- [x] grunt-contrib-uglify
+- [x] js-base64
+- [x] level
+- [x] dayjs
+- [x] parseurl
+- [x] babel-preset-stage-1
+- [x] read
+- [x] lodash.defaults
+- [x] tough-cookie
+- [x] cli
+- [x] emotion
+- [x] map-stream
+- [x] fancy-log
+- [x] gulp-load-plugins
+- [x] cross-fetch
+- [x] is-plain-object
+- [x] source-map-loader
+- [x] @octokit/rest
+- [x] multimatch
+- [x] pretty-bytes
+- [x] urijs
+- [x] i18next
+- [x] @babel/types
+- [x] pino
+- [x] verror
+- [x] gulp-notify
+- [x] merge-stream
+- [x] npm-run-all
+- [x] stylus-loader
+- [x] @babel/preset-typescript
+- [x] grpc
+- [x] vue-style-loader
+- [x] create-hash
+- [x] touch
+- [x] csv
+- [x] tslint-config-prettier
+- [x] lodash.camelcase
+- [x] log-update
+- [x] lodash.isplainobject
+- [x] apollo-client
+- [x] gulp-conflict
+- [x] @types/cordova
+- [x] inversify
+- [x] react-dropzone
+- [x] yargs-parser
+- [x] babel-traverse
+- [x] babel-plugin-syntax-dynamic-import
+- [x] raw-body
+- [x] @babel/runtime-corejs2
+- [x] sync-request
+- [x] @types/jasmine
+- [x] react-tap-event-plugin
+- [x] babel-plugin-transform-react-remove-prop-types
+- [x] draft-js
+- [x] bcrypt-nodejs
+- [x] @babel/parser
+- [x] jwt-decode
+- [x] postcss-cssnext
+- [x] react-icons
+- [x] d3-selection
+- [x] @angular-devkit/schematics
+- [x] es6-promisify
+- [x] react-modal
+- [x] redux-form
+- [x] lodash.uniq
+- [x] gulp-postcss
+- [x] karma-chrome-launcher
+- [x] child-process-promise
+- [x] babel-plugin-transform-react-jsx
+- [x] phantomjs-prebuilt
+- [x] @angular/platform-server
+- [x] brfs
+- [x] tar-fs
+- [x] nyc
+- [x] phantomjs
+- [x] vinyl-buffer
+- [x] lodash.isfunction
+- [x] btoa
+- [x] rxjs-compat
+- [x] fork-ts-checker-webpack-plugin
+- [x] @types/request
+- [x] recast
+- [x] d3-array
+- [x] gulp-jshint
+- [x] make-dir
+- [x] https
+- [x] bip39
+- [x] vue-class-component
+- [x] grunt-contrib-copy
+- [x] selenium-webdriver
+- [x] opener
+- [x] is-wsl
+- [x] koa-body
+- [x] lodash.isstring
+- [x] lodash.template
+- [x] nodegit
+- [x] fstream
+- [x] node-cache
+- [x] node-watch
+- [x] @types/uuid
+- [x] imagemin
+- [x] gulp-filter
+- [x] vue-property-decorator
+- [x] gaze
+- [x] supertest
+- [x] gulp-clean-css
+- [x] chance
+- [x] gulp-typescript
+- [x] lowdb
+- [x] assert-plus
+- [x] eslint-plugin-vue
+- [x] gulp-minify-css
+- [x] is-url
+- [x] urllib
+- [x] babel-generator
+- [x] immer
+- [x] sha1
+- [x] grunt-contrib-jshint
+- [x] mockjs
+- [x] node.extend
+- [x] connect-redis
+- [x] babel-plugin-module-resolver
+- [x] prompts
+- [x] hyperquest
+- [x] https-proxy-agent
+- [x] chai-as-promised
+- [x] http-server
+- [x] rollup-pluginutils
+- [x] apollo-link
+- [x] coveralls
+- [x] d3-shape
+- [x] postcss-normalize
+- [x] promise-polyfill
+- [x] node-pre-gyp
+- [x] @fortawesome/react-fontawesome
+- [x] preact
+- [x] babel-plugin-transform-async-to-generator
+- [x] osenv
+- [x] lodash.isempty
+- [x] @babel/traverse
+- [x] lodash.map
+- [x] winston-daily-rotate-file
+- [x] passport-oauth
+- [x] passport-strategy
+- [x] babel-template
+- [x] gulp-eslint
+- [x] babel-plugin-syntax-jsx
+- [x] markdown
+- [x] jest-environment-jsdom-fourteen
+- [x] react-error-overlay
+- [x] bizcharts
+- [x] base64-js
+- [x] component-emitter
+- [x] connect-flash
+- [x] koa-logger
+- [x] react-color
+- [x] dockerode
+- [x] enzyme-adapter-react-16
+- [x] grunt-cli
+- [x] front-matter
+- [x] mssql
+- [x] react-native-vector-icons
+- [x] react-virtualized
+- [x] fork-ts-checker-webpack-plugin-alt
+- [x] node-dir
+- [x] babel-plugin-transform-regenerator
+- [x] keypress
+- [x] @types/bluebird
+- [x] lodash.foreach
+- [x] grunt-contrib-concat
+- [x] @phosphor/widgets
+- [x] awesome-typescript-loader
+- [x] apollo-link-http
+- [x] babel-preset-stage-3
+- [x] lodash.flatten
+- [x] react-apollo
+- [x] intl
+- [x] babel-plugin-dynamic-import-node
+- [x] uglify-es
+- [x] react-lifecycles-compat
+- [x] @babel/plugin-proposal-export-default-from
+- [x] is-promise
+- [x] pngjs
+- [x] postcss-nested
+- [x] rc-slider
+- [x] node-static
+- [x] gh-pages
+- [x] cli-table2
+- [x] os
+- [x] reactstrap
+- [x] extract-zip
+- [x] gulp-shell
+- [x] vue-i18n
+- [x] @types/mocha
+- [x] decamelize
+- [x] bson
+- [x] imagemin-pngquant
+- [x] lodash.isobject
+- [x] @emotion/styled
+- [x] react-slick
+- [x] typeorm
+- [x] sprintf
+- [x] apollo-cache-inmemory
+- [x] babel-plugin-lodash
+- [x] hexlet-pairs
+- [x] pouchdb
+- [x] react-markdown
+- [x] yeoman-environment
+- [x] progress-bar-webpack-plugin
+- [x] stylelint-order
+- [x] stylelint-scss
+- [x] koa-mount
+- [x] busboy
+- [x] sinon-chai
+- [x] jasmine-core
+- [x] process
+- [x] angular-animate
+- [x] karma-mocha
+- [x] karma-phantomjs-launcher
+- [x] ts-pnp
+- [x] atob
+- [x] connect-mongo
+- [x] @jupyterlab/application
+- [x] @babel/plugin-proposal-export-namespace-from
+- [x] bulma
+- [x] cli-ux
+- [x] iniparser
+- [x] nock
+- [x] object.assign
+- [x] flux
+- [x] semantic-ui-react
+- [x] karma-jasmine
+- [x] inert
+- [x] jwt-simple
+- [x] isobject
+- [x] jsdoc
+- [x] element-resize-detector
+- [x] react-datepicker
+- [x] standard
+- [x] react-onclickoutside
+- [x] react-addons-shallow-compare
+- [x] dot
+- [x] browserslist
+- [x] firebase-admin
+- [x] nib
+- [x] ansi-colors
+- [x] tracer
+- [x] yaml
+- [x] js-yaml
+- [x] ansi-escapes
+- [x] jquery-ui
+- [x] raven
+- [x] i
+- [x] xhr
+- [x] deep-assign
+- [x] fresh
+- [x] long
+- [x] secp256k1
+- [x] vorpal
+- [x] finalhandler
+- [x] tweetnacl
+- [x] showdown
+- [x] path-is-absolute
+- [x] crc
+- [x] hiredis
+- [x] serve-index
+- [x] highland
+- [x] localforage
+- [x] iview
+- [x] dom-helpers
+- [x] ethereumjs-tx
+- [x] leveldown
+- [x] rc-util
+- [x] depd
+- [x] bl
+- [x] nprogress
+- [x] accepts
+- [x] findup-sync
+- [x] passport-oauth2
+- [x] etag
+- [x] slugify
+- [x] split2
+- [x] extend-shallow
+- [x] xregexp
+- [x] hash-sum
+- [x] restler
+- [x] normalize-wheel
+- [x] pako
+- [x] utils-merge
+- [x] gray-matter
+- [x] hogan.js
+- [x] quill
+- [x] soap
+- [x] randombytes
+- [x] arrify
+- [x] bytebuffer
+- [x] xml2json
+- [x] fluent-ffmpeg
+- [x] xml-js
+- [x] sockjs-client
+- [x] resolve-from
+- [x] es6-error
+- [x] loose-envify
+- [x] envify
+- [x] bufferutil
+- [x] tv4

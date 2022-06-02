@@ -7,8 +7,8 @@ import { parse } from "./deps/jsonc";
 import { rimraf } from "./deps/rimraf";
 import { getPackageRoot } from "./deps/package";
 
-const SHOULD_BUILD_CLI = true;
 const SHOULD_BUILD_LIB = true;
+const SHOULD_BUILD_CLI = false;
 
 type TSConfig = {
   compilerOptions: {
