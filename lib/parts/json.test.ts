@@ -1,4 +1,4 @@
-import { readJSON, writeJSON } from "./json";
+import { readJSON, removeJSONComments, writeJSON } from "./json";
 
 test("readJSON", () => {
   expect(
@@ -22,4 +22,20 @@ test("writeJSON", () => {
       unicorn: "cake",
     })
   ).toBe('{"unicorn":"cake"}');
+});
+
+test("removeJSONComments", () => {
+  expect(
+    JSON.parse(
+      removeJSONComments(`{
+  // Rainbows
+  "unicorn": "cake"
+  /*
+    A multi-line comment
+  */
+}`)
+    )
+  ).toEqual({
+    unicorn: "cake",
+  });
 });

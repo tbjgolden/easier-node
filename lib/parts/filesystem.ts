@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { getLastNBytes } from "./filesystem.helpers";
 import { JSONData, readJSON, writeJSON } from "./json";
 
 /**
@@ -90,7 +91,7 @@ export const appendFile = async (
         } else {
           const isFile = stats.isFile();
           if (isFile) {
-            resolve((await _getLastNBytes(path, 1))[0] !== 10);
+            resolve((await getLastNBytes(path, 1))[0] !== 10);
           } else {
             reject(new Error(`Expected ${path} to be a file`));
           }
@@ -107,56 +108,6 @@ export const appendFile = async (
     fs.appendFile(path, stringToAppend, (error) => {
       if (error) return reject(error);
       return resolve();
-    });
-  });
-};
-
-export const _getLastNBytes = async (path: string, n: number): Promise<Uint8Array> => {
-  if (!Number.isFinite(n) || !Number.isInteger(n) || n < 0) {
-    throw new Error(`Invalid n arg: ${n}`);
-  }
-  if (n === 0) return Buffer.from("");
-
-  return new Promise((resolve, reject) => {
-    // use lstat to find file
-    fs.lstat(path, async (error, stats) => {
-      if (error !== null) {
-        return reject(error);
-      } else {
-        const isFile = stats.isFile();
-        if (isFile) {
-          if (stats.size === 0) {
-            return resolve(Buffer.from(""));
-          } else {
-            // get last n bytes
-            const position = Math.max(0, stats.size - n);
-            const length = Math.min(stats.size, n);
-
-            fs.open(path, "r", (error, fd) => {
-              if (error) {
-                return reject(error);
-              } else {
-                fs.read(
-                  fd,
-                  Buffer.alloc(length),
-                  0,
-                  length,
-                  position,
-                  (
-                    _error: NodeJS.ErrnoException | null,
-                    _bytesRead: number,
-                    buffer: NodeJS.ArrayBufferView
-                  ): void => {
-                    return resolve(new Uint8Array(buffer.buffer));
-                  }
-                );
-              }
-            });
-          }
-        } else {
-          return reject(new Error(`Expected ${path} to be a file`));
-        }
-      }
     });
   });
 };

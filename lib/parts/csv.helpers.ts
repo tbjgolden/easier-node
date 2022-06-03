@@ -1,0 +1,235 @@
+import { reverseSafe } from "./string.helpers";
+
+const NO_ESCAPE_NEEDED_REGEX = /^[^\s",]([^\n\r",]*[^\s",])?$|^$/;
+
+export const doesCSVValueRequireQuotes = (value: string): boolean => {
+  return !NO_ESCAPE_NEEDED_REGEX.test(value);
+};
+
+export type ParseOptions = {
+  shouldTrimWhiteSpace: boolean;
+  returnOnFail: boolean;
+};
+
+/**
+ * Parse takes a string of CSV data and converts it to:
+ * an array of rows; where rows are an array of cells as strings
+ *
+ * RFC 4180, with two bonuses:
+ *   - whitespace is trimmed (unless quoted); can be disabled
+ *   - all line endings normalised to \n
+ *
+ * Note that the 2D array may not be full; some rows may
+ * have different numbers of cells.
+ *
+ * @param options.shouldTrimWhiteSpace
+ * trim extra whitespace between commas and newlines
+ *
+ * @param options.returnOnFail
+ * if true, returns any parsed cells so far instead of throwing
+ */
+export const parseCSV = (
+  csvString: string,
+  options: Partial<ParseOptions> = {}
+): string[][] => {
+  const { shouldTrimWhiteSpace, returnOnFail }: ParseOptions = {
+    shouldTrimWhiteSpace: true,
+    returnOnFail: false,
+    ...options,
+  };
+  const lexer = /"|\r\n|\n|\r|,| |\t|[^\n\r",]+/y;
+  const output: string[][] = [];
+
+  let value = "";
+  let row: string[] = [];
+  let columnNumber = 1;
+  let rowNumber = 1;
+
+  let matches: RegExpExecArray | null = null;
+  let match = "";
+  let state = 0;
+
+  function addCell(isDelimited: boolean) {
+    row.push(isDelimited || !shouldTrimWhiteSpace ? value : value.trim());
+    value = "";
+    columnNumber += 1;
+  }
+
+  function addRow() {
+    output.push(row);
+    row = [];
+    rowNumber += 1;
+    columnNumber = 1;
+  }
+
+  try {
+    while ((matches = lexer.exec(csvString)) !== null) {
+      match = matches[0];
+      if (match.includes(",")) match = match.trim();
+      if (match.startsWith("\r")) match = "\n";
+
+      switch (state) {
+        case 0: // start of cell
+          switch (true) {
+            case match === '"':
+              state = 2;
+              break;
+            case match === ",":
+              addCell(false);
+              break;
+            case match === "\n":
+              addCell(false);
+              addRow();
+              break;
+            case match === " ":
+            case match === "\t":
+              if (shouldTrimWhiteSpace) {
+                break;
+              } else {
+                value += match;
+                state = 1;
+                break;
+              }
+            default:
+              value += match;
+              state = 1;
+              break;
+          }
+          break;
+        case 1: // input with no quotes
+          switch (true) {
+            case match === ",":
+              state = 0;
+              addCell(false);
+              break;
+            case match === "\n":
+              state = 0;
+              addCell(false);
+              addRow();
+              break;
+            default:
+              if (shouldTrimWhiteSpace) {
+                throw new Error(`Expected , or \\n (${rowNumber},${columnNumber})`);
+              } else {
+                value += match;
+                break;
+              }
+          }
+          break;
+        case 2: // input with quotes
+          switch (true) {
+            case match === '"':
+              state = 3;
+              break;
+            default:
+              value += match;
+              break;
+          }
+          break;
+        case 3: // input with quotes after close quote
+          switch (true) {
+            case match === '"': // an escaped "
+              state = 2;
+              value += match;
+              break;
+            case match === ",":
+              state = 0;
+              addCell(true);
+              break;
+            case match === "\n":
+              state = 0;
+              addCell(true);
+              addRow();
+              break;
+            case match === " ":
+            case match === "\t":
+              if (shouldTrimWhiteSpace) {
+                break;
+              } else {
+                throw new Error(`Expected " or , or \\n (${rowNumber},${columnNumber})`);
+              }
+            default:
+              throw new Error(
+                `Expected " or , or <whitespace> (${rowNumber},${columnNumber})`
+              );
+          }
+          break;
+      }
+    }
+
+    if (row.length > 0) {
+      if (state === 2) {
+        throw new Error(`Unterminated " at EOF (${rowNumber},${columnNumber})`);
+      }
+
+      addCell(state > 1);
+      addRow();
+    }
+  } catch (error) {
+    if (returnOnFail) {
+      return output;
+    } else {
+      throw error;
+    }
+  }
+
+  return output;
+};
+
+export const getFirstNEntriesFromPartialCSV = (
+  partialStartString: string,
+  n: number,
+  parseOptions: Partial<Omit<ParseOptions, "returnOnFail">> = {}
+): string[][] | "incomplete" => {
+  const parsed = parseCSV(partialStartString, {
+    ...parseOptions,
+    returnOnFail: true,
+  });
+
+  if (parsed.length <= n) return "incomplete";
+
+  const nonEmptyLines: string[][] = [];
+  for (const line of parsed) {
+    if (nonEmptyLines.length === n) {
+      return nonEmptyLines;
+    }
+    if (line.length > 0) {
+      nonEmptyLines.push(line);
+    }
+  }
+
+  return "incomplete";
+};
+
+const CRLF_REGEX = /\r\n?/g;
+
+export const getLastNEntriesFromPartialCSV = (
+  partialEndString: string,
+  n: number,
+  parseOptions: Partial<Omit<ParseOptions, "returnOnFail">> = {}
+): string[][] | "incomplete" => {
+  const withNoCRLF = partialEndString.replace(CRLF_REGEX, "\n");
+  const reversed = reverseSafe(withNoCRLF);
+  const parsed = parseCSV(reversed, {
+    ...parseOptions,
+    returnOnFail: true,
+  });
+
+  if (parsed.length <= n) return "incomplete";
+
+  const nonEmptyLines: string[][] = [];
+  for (const line of parsed) {
+    if (nonEmptyLines.length === n) {
+      return nonEmptyLines;
+    }
+    if (line.length > 0) {
+      const reversedLine: string[] = [];
+      for (let index = line.length - 1; index >= 0; index--) {
+        reversedLine.push(reverseSafe(line[index]));
+      }
+      nonEmptyLines.push(reversedLine);
+    }
+  }
+
+  return "incomplete";
+};
