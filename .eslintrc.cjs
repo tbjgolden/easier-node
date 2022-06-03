@@ -49,30 +49,16 @@ module.exports = {
       "error",
       {
         cases: {
-          camelCase: true,
-          pascalCase: true,
+          kebabCase: true,
         },
-        ignore: ["-env\\.d\\.ts$"],
       },
     ],
     "unicorn/no-null": "off",
-    "unicorn/prevent-abbreviations": [
-      "error",
-      {
-        extendDefaultReplacements: false,
-        replacements: {
-          def: { defer: true, deferred: true, define: true, definition: true },
-          dir: { direction: true, directory: true },
-          docs: { documentation: true, documents: true },
-          dst: { daylightSavingTime: true, destination: true, distribution: true },
-          e: { error: true, event: true },
-          rel: { related: true, relationship: true, relative: true },
-          res: { response: true, result: true },
-        },
-      },
-    ],
+    "unicorn/prevent-abbreviations": ["error"],
     "unicorn/prefer-switch": ["error", { minimumCases: 5 }],
     "unicorn/no-new-array": "off",
+    "unicorn/no-nested-await": "off",
+    "unicorn/no-await-expression-member": "off",
   },
   overrides: [
     {

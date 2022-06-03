@@ -2,6 +2,7 @@
   "name": "easier-node",
   "description": "Node.js, but with a modern API",
   "version": "0.0.0",
+  "type": "module",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
@@ -59,5 +60,8 @@
     "branches": [
       "main"
     ]
+  },
+  "dependencies": {
+    "strip-json-comments": "^4.0.0"
   }
 }

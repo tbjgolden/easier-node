@@ -34,18 +34,19 @@ At this point, more risk comes from importing it as a dependency than bundling i
 
 ## node builtins
 
+### stdin
+
+- [x] async readInput
+
 ### fs / io
 
 fs calls use trash, do not follow links
 
-- [ ] print
-- [ ] async readInput
-- [ ] async readInputUntil
-- [ ] async readFile
-- [ ] async readJSONFile // supports JSON5 by default
-- [ ] async writeFile
-- [ ] async writeJSONFile // supports JSON5 by default
-- [ ] async appendFile
+- [x] async readFile
+- [x] async readJSONFile // supports JSON w/ comments by default
+- [x] async writeFile
+- [x] async writeJSONFile // supports JSON by default
+- [x] async appendFile
 - [ ] async appendFileCSV // accepts obj, ignores trailing newlines
 - [ ] async listFilesInFolder
 - [ ] async listFoldersInFolder
@@ -68,9 +69,11 @@ fs calls use trash, do not follow links
 - [ ] async isFile
 - [ ] async isFolder
 - [ ] async - some stats helper fns
-- [ ] $CWD
-- [ ] $THIS_FILE_PATH (not sure if possible, perhaps requires setFile)
-- [ ] $THIS_FOLDER_PATH (not sure if possible, perhaps requires setFile)
+- [x] $CWD
+- [x] $LOG
+- [x] $WARN
+- [x] $ERROR
+- [x] $DEBUG
 
 ### child_process
 
@@ -91,11 +94,12 @@ fs calls use trash, do not follow links
 
 ### path
 
-- [ ] joinPaths
-- [ ] resolvePaths
-- [ ] parse
-- [ ] normalize
-- [ ] split?
+- [x] joinPaths
+- [x] resolvePaths
+- [x] normalizePath
+- [x] splitPath
+- [x] getExtension
+- [x] ensurePathEndsWithSlash
 
 ### dns
 
@@ -183,6 +187,11 @@ fs calls use trash, do not follow links
 - [ ] some tolerant json parser / bindings
 - [ ] validator
 - [ ] lru-cache
+
+---
+
+- [ ] $THIS_FILE_PATH (not sure if possible, perhaps requires setFile)
+- [ ] $THIS_FOLDER_PATH (not sure if possible, perhaps requires setFile)
 
 ---
 
