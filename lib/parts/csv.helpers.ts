@@ -31,7 +31,7 @@ export type ParseOptions = {
 export const parseCSV = (
   csvString: string,
   options: Partial<ParseOptions> = {}
-): string[][] => {
+): { rows: string[][]; error?: Error } => {
   const { shouldTrimWhiteSpace, returnOnFail }: ParseOptions = {
     shouldTrimWhiteSpace: true,
     returnOnFail: false,
@@ -165,15 +165,21 @@ export const parseCSV = (
       addCell(state > 1);
       addRow();
     }
-  } catch (error) {
+  } catch (rawError) {
     if (returnOnFail) {
-      return output;
+      const error = rawError instanceof Error ? rawError : undefined;
+      return {
+        rows: output,
+        error,
+      };
     } else {
-      throw error;
+      throw rawError;
     }
   }
 
-  return output;
+  return {
+    rows: output,
+  };
 };
 
 export const getFirstNEntriesFromPartialCSV = (
@@ -186,15 +192,18 @@ export const getFirstNEntriesFromPartialCSV = (
     returnOnFail: true,
   });
 
-  if (parsed.length <= n) return "incomplete";
+  if (parsed.rows.length < n) return "incomplete";
 
-  const nonEmptyLines: string[][] = [];
-  for (const line of parsed) {
-    if (nonEmptyLines.length === n) {
-      return nonEmptyLines;
+  const nonEmptyRows: string[][] = [];
+  for (const row of parsed.rows) {
+    if (nonEmptyRows.length === n) {
+      return nonEmptyRows;
     }
-    if (line.length > 0) {
-      nonEmptyLines.push(line);
+    if (row.length > 0) {
+      nonEmptyRows.push(row);
+      if (nonEmptyRows.length === n && parsed.error === undefined) {
+        return nonEmptyRows;
+      }
     }
   }
 
@@ -215,19 +224,22 @@ export const getLastNEntriesFromPartialCSV = (
     returnOnFail: true,
   });
 
-  if (parsed.length <= n) return "incomplete";
+  if (parsed.rows.length < n) return "incomplete";
 
-  const nonEmptyLines: string[][] = [];
-  for (const line of parsed) {
-    if (nonEmptyLines.length === n) {
-      return nonEmptyLines;
+  const nonEmptyRows: string[][] = [];
+  for (const row of parsed.rows) {
+    if (nonEmptyRows.length === n) {
+      return nonEmptyRows;
     }
-    if (line.length > 0) {
-      const reversedLine: string[] = [];
-      for (let index = line.length - 1; index >= 0; index--) {
-        reversedLine.push(reverseSafe(line[index]));
+    if (row.length > 0) {
+      const reversedRow: string[] = [];
+      for (let index = row.length - 1; index >= 0; index--) {
+        reversedRow.push(reverseSafe(row[index]));
       }
-      nonEmptyLines.push(reversedLine);
+      nonEmptyRows.push(reversedRow);
+      if (nonEmptyRows.length === n && parsed.error === undefined) {
+        return nonEmptyRows;
+      }
     }
   }
 

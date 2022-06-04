@@ -1,4 +1,4 @@
-import { escapeCSVValue, parseCSV } from "./csv";
+import { escapeCSVValue, getFirstCSVFileRow, getLastCSVFileRow, parseCSV } from "./csv";
 import {
   doesCSVValueRequireQuotes,
   getFirstNEntriesFromPartialCSV,
@@ -57,33 +57,33 @@ for (const testCase of RFC_TEST_CASES) {
   test(`parseCSV: RFC Rule [\\n] #${testCase.rfc}:\n${testCase.description.join(
     "\n"
   )}`, () => {
-    expect(parseCSV(testCase.csv.join("\n"))).toEqual(testCase.json);
+    expect(parseCSV(testCase.csv.join("\n")).rows).toEqual(testCase.json);
   });
   test(`parseCSV: RFC Rule [\\r\\n] #${testCase.rfc}:\n${testCase.description.join(
     "\n"
   )}`, () => {
-    expect(parseCSV(testCase.csv.join("\r\n"))).toEqual(testCase.json);
+    expect(parseCSV(testCase.csv.join("\r\n")).rows).toEqual(testCase.json);
   });
 }
 
 test(`parseCSV: Whitespace Tests`, () => {
   for (const testCase of WHITESPACE_TEST_CASES) {
-    expect(parseCSV(testCase.csv.join("\n"))).toEqual(testCase.json);
+    expect(parseCSV(testCase.csv.join("\n")).rows).toEqual(testCase.json);
   }
 });
 
 test(`parseCSV: Whitespace Tests (no trim)`, () => {
   for (const testCase of NO_TRIM_WHITESPACE_TEST_CASES) {
-    expect(parseCSV(testCase.csv.join("\n"), { shouldTrimWhiteSpace: false })).toEqual(
-      testCase.json
-    );
+    expect(
+      parseCSV(testCase.csv.join("\n"), { shouldTrimWhiteSpace: false }).rows
+    ).toEqual(testCase.json);
   }
 });
 
 test(`parseCSV: Tolerance Tests`, () => {
   for (const testCase of TOLERANCE_TEST_CASES) {
     expect(() => {
-      return parseCSV(testCase.csv.join("\n"));
+      return parseCSV(testCase.csv.join("\n")).rows;
     }).not.toThrow();
   }
 });
@@ -91,7 +91,7 @@ test(`parseCSV: Tolerance Tests`, () => {
 test(`parseCSV: Error Tests`, () => {
   for (const testCase of ERROR_TEST_CASES) {
     expect(() => {
-      return parseCSV(testCase.csv.join("\n"));
+      return parseCSV(testCase.csv.join("\n")).rows;
     }).toThrow();
   }
 });
@@ -181,4 +181,70 @@ test(`getLastNEntriesFromPartialCSV`, async () => {
     ["2021/11/16", "Switchboard", "Email", "No", "Yes", "No", "No", "High", "", ""],
     ["2021/11/18", "The Nerdery", "Email", "No", "Yes", "No", "No", "High", "", ""],
   ]);
+});
+
+test(`getFirstCSVFileRow`, async () => {
+  const a = await getFirstCSVFileRow("lib/parts/__fixtures__/recruiters.csv");
+  expect(a).toEqual([
+    "Date",
+    "Company",
+    "Method",
+    "in-house",
+    "copy-paste",
+    "got basic detail wrong",
+    "wrong tech stack",
+    "Bullshit Level",
+    "dafuq",
+    "!",
+  ]);
+  const b = await getFirstCSVFileRow("lib/parts/__fixtures__/recruiters.1line.csv");
+  expect(b).toEqual(a);
+
+  let didThrow = false;
+  try {
+    await getFirstCSVFileRow("lib/parts/__fixtures__/recruiters.fail.csv");
+  } catch {
+    didThrow = true;
+  }
+
+  expect(didThrow).toBe(true);
+});
+
+test(`getLastCSVFileRow`, async () => {
+  const a = await getLastCSVFileRow("lib/parts/__fixtures__/recruiters.csv");
+  expect(a).toEqual([
+    "2022/01/13",
+    "<Our client>",
+    "Phone",
+    "No",
+    "No",
+    "No",
+    "No",
+    "High",
+    "",
+    "",
+  ]);
+  const b = await getLastCSVFileRow("lib/parts/__fixtures__/recruiters.1line.csv");
+
+  expect(b).toEqual([
+    "Date",
+    "Company",
+    "Method",
+    "in-house",
+    "copy-paste",
+    "got basic detail wrong",
+    "wrong tech stack",
+    "Bullshit Level",
+    "dafuq",
+    "!",
+  ]);
+
+  let didThrow = false;
+  try {
+    await getLastCSVFileRow("lib/parts/__fixtures__/recruiters.fail.csv");
+  } catch {
+    didThrow = true;
+  }
+
+  expect(didThrow).toBe(true);
 });
