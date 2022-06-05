@@ -1,7 +1,7 @@
 import {
   joinPaths,
   resolvePaths,
-  normalizePath,
+  getNormalizedPath,
   splitPath,
   getExtension,
   ensurePathEndsWithSlash,
@@ -17,10 +17,10 @@ test("resolvePaths", () => {
   expect(resolvePaths("a", "b/c")).toBe(process.cwd() + "/a/b/c");
 });
 
-test("normalizePath", () => {
-  expect(normalizePath("/a/../b")).toBe("/b");
-  expect(normalizePath("/a/./b")).toBe("/a/b");
-  expect(normalizePath("a/..")).toBe(".");
+test("getNormalizedPath", () => {
+  expect(getNormalizedPath("/a/../b")).toBe("/b");
+  expect(getNormalizedPath("/a/./b")).toBe("/a/b");
+  expect(getNormalizedPath("a/..")).toBe(".");
 });
 
 test("splitPath", () => {
@@ -37,7 +37,7 @@ test("getExtension", () => {
   expect(getExtension("/a.dir.with.dots/")).toBe(".dots");
 });
 
-test("getExtension", () => {
+test("ensurePathEndsWithSlash", () => {
   expect(ensurePathEndsWithSlash("/hello/world")).toBe("/hello/world/");
   expect(ensurePathEndsWithSlash("/hello/world/")).toBe("/hello/world/");
   expect(ensurePathEndsWithSlash("/hello")).toBe("/hello/");

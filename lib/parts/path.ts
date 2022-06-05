@@ -1,8 +1,8 @@
-import { join, resolve, normalize } from "node:path";
+import nodePath from "node:path";
+import { $CWD } from "./aliases";
 
 /**
  * Identical to path.join:
- *
  * @example
  * // returns "a/b/c"
  * joinPaths("a", "/b/c")
@@ -11,7 +11,7 @@ import { join, resolve, normalize } from "node:path";
  * joinPaths("a", "b/c")
  * */
 export const joinPaths = (pathA: string, pathB: string, ...extraPaths: string[]) => {
-  return join(pathA, pathB, ...extraPaths);
+  return nodePath.join(pathA, pathB, ...extraPaths);
 };
 
 /**
@@ -24,23 +24,23 @@ export const joinPaths = (pathA: string, pathB: string, ...extraPaths: string[])
  * resolvePaths("a", "b/c")
  * */
 export const resolvePaths = (pathA: string, pathB: string, ...extraPaths: string[]) => {
-  return resolve(pathA, pathB, ...extraPaths);
+  return nodePath.resolve(pathA, pathB, ...extraPaths);
 };
 
 /**
- * Identical to path.normalize:
+ * Identical to path.normalize (for normalized absolute paths, use getAbsolutePath):
  * @example
  * // returns "/b"
- * normalizePath("/a/../b")
+ * getNormalizedPath("/a/../b")
  * @example
  * // returns "/a/b"
- * normalizePath("/a/./b")
+ * getNormalizedPath("/a/./b")
  * @example
  * // returns "."
- * normalizePath("a/..")
+ * getNormalizedPath("a/..")
  * */
-export const normalizePath = (path: string) => {
-  return normalize(path);
+export const getNormalizedPath = (path: string) => {
+  return nodePath.normalize(path);
 };
 
 /**
@@ -53,7 +53,7 @@ export const normalizePath = (path: string) => {
  * splitPath("/")
  * */
 export const splitPath = (path: string) => {
-  const normalizedPath = normalizePath(path);
+  const normalizedPath = getNormalizedPath(path);
   const parts = normalizedPath.split("/");
   return parts.filter((part) => {
     return part !== "" && part !== ".";
@@ -100,4 +100,28 @@ export const getExtension = (path: string): string => {
  */
 export const ensurePathEndsWithSlash = (path: string): string => {
   return path.endsWith("/") ? path : path + "/";
+};
+
+/**
+ * converts the path to a normalized absolute path
+ * @example
+ * // returns ensurePathEndsWithSlash($CWD()) + "hello/world/"
+ * getAbsolutePath("hello/world")
+ */
+export const getAbsolutePath = (path: string): string => {
+  return resolvePaths($CWD(), path);
+};
+
+/**
+ * get the normalized absolute path of the parent folder
+ * @example
+ * // returns ensurePathEndsWithSlash($CWD()) + "hello"
+ * getParentFolderPath("hello/world")
+ */
+export const getParentFolderPath = (path: string): string => {
+  const absolutePath = getAbsolutePath(path);
+
+  if (absolutePath === "/") throw new Error("Can't get parent of /");
+
+  return joinPaths(absolutePath, "..");
 };

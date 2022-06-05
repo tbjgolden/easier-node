@@ -51,25 +51,31 @@ fs calls use trash, do not follow links
 - [x] async appendRowToCSVFile
 - [x] async listFilesInFolder
 - [x] async listFoldersInFolder
-- [ ] async listFilesWithinFolder
-- [ ] async listFoldersWithinFolder
-- [ ] async perMatch // using some glob style stuff
-- [ ] async perFileMatch
-- [ ] async perFolderMatch
-- [ ] async ensureFolder
-- [ ] async ensureFile
+- [x] async listFilesWithinFolder
+- [x] async listFoldersWithinFolder
+- [x] async isFile
+- [x] async isFolder
+- [x] async isSymlink
+- [x] async removeFile
+- [x] async removeFolder
+- [ ] async deleteFile
+- [ ] async deleteFolder
+- [ ] async createFolder
+- [ ] async ensureFolderExists
+- [ ] async ensureEmptyFolderExists
+- [ ] async ensureFileExists
+- [ ] async ensureEmptyFileExists
 - [ ] async emptyFolder
 - [ ] async renameFile
 - [ ] async renameFolder
-- [ ] async moveFile
+- [x] async moveFile
 - [ ] async moveFolder
 - [ ] async copyFile
 - [ ] async copyFolder
-- [ ] async deleteFile
-- [ ] async deleteFolder
-- [ ] async isFile
-- [ ] async isFolder
-- [ ] async - some stats helper fns
+- [ ] async perMatch // globby
+- [ ] async perFileMatch
+- [ ] async perFolderMatch
+- [ ] async - some stats helper mountfns - bytes, timeLastChangedMs, createdAtMs
 - [x] $CWD
 - [x] $LOG
 - [x] $WARN

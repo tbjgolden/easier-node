@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { getLastNBytes } from "./filesystem.helpers";
+import { getLastNBytes, move, trashPath } from "./filesystem.helpers";
 import { JSONData, readJSON, writeJSON } from "./json";
 import { joinPaths, resolvePaths } from "./path";
 
@@ -114,7 +114,7 @@ export const appendFile = async (
   });
 };
 /**
- * listFilesInFolder
+ * get a list of the files directly inside a folder
  * */
 export const listFilesInFolder = async (
   path: string,
@@ -143,7 +143,7 @@ export const listFilesInFolder = async (
 };
 
 /**
- * listFoldersInFolder
+ * get a list of the folders directly inside a folder
  * */
 export const listFoldersInFolder = async (
   path: string,
@@ -172,12 +172,16 @@ export const listFoldersInFolder = async (
 };
 
 /**
- * listFolderContents
+ * get a list of files + a list of folders that are directly inside a folder
  * */
 export const listFolderContents = async (
   path: string,
   output: "absolute" | "relative-path" | "relative-cwd" = "relative-path"
 ): Promise<{ folders: string[]; files: string[] }> => {
+  if (!(await isFolder(path))) {
+    throw new Error("Path is not a directory");
+  }
+
   return new Promise((resolve, reject) => {
     fs.readdir(path, { withFileTypes: true }, (error, dirents) => {
       if (error) return reject(error);
@@ -206,7 +210,7 @@ export const listFolderContents = async (
 };
 
 /**
- * listFilesWithinFolder
+ * get a list of the files nested inside a folder or its descendant folders
  * */
 export const listFilesWithinFolder = async (
   path: string,
@@ -246,7 +250,7 @@ const recursiveListFilesWithinFolder = async (path: string): Promise<string[]> =
 };
 
 /**
- * listFoldersWithinFolder
+ * get a list of the folders nested inside a folder or its descendant folders
  * */
 export const listFoldersWithinFolder = async (
   path: string,
@@ -280,4 +284,124 @@ const recursiveListFoldersWithinFolder = async (path: string): Promise<string[]>
   ).flat();
 
   return [...folders, ...descendants];
+};
+
+const getType = async (
+  path: string
+): Promise<"file" | "folder" | "symlink" | "other" | "none"> => {
+  return new Promise((resolve) => {
+    fs.lstat(path, (error, stats) => {
+      if (error) return resolve("none");
+      else if (stats.isFile()) return resolve("file");
+      else if (stats.isDirectory()) return resolve("folder");
+      else if (stats.isSymbolicLink()) return resolve("symlink");
+      else return resolve("other");
+    });
+  });
+};
+
+/**
+ * move or rename a file to a new location
+ */
+export const moveFile = async (
+  sourcePath: string,
+  destinationPath: string,
+  shouldOverwrite = true
+) => {
+  if (await isFile(sourcePath)) {
+    await move(sourcePath, destinationPath, shouldOverwrite);
+  } else {
+    throw new Error("Expected sourcePath to be a file");
+  }
+};
+
+/**
+ * move or rename a folder to a new location
+ */
+export const moveFolder = async (
+  sourcePath: string,
+  destinationPath: string,
+  shouldOverwrite = true
+) => {
+  if (await isFolder(sourcePath)) {
+    await move(sourcePath, destinationPath, shouldOverwrite);
+  } else {
+    throw new Error("Expected sourcePath to be a folder");
+  }
+};
+
+/**
+ * move a file to Trash/Recycle bin
+ */
+export const removeFile = async (path: string): Promise<void> => {
+  return trashPath(path);
+};
+
+/**
+ * move a folder to Trash/Recycle bin
+ */
+export const removeFolder = removeFile;
+
+/**
+ * determines if the path refers to a file or not
+ */
+export const isFile = async (path: string): Promise<boolean> => {
+  return (await getType(path)) === "file";
+};
+
+/**
+ * determines if the path refers to a folder or not
+ */
+export const isFolder = async (path: string): Promise<boolean> => {
+  return (await getType(path)) === "folder";
+};
+
+/**
+ * determines if the path refers to a symbolic link or not
+ */
+export const isSymlink = async (path: string): Promise<boolean> => {
+  return (await getType(path)) === "symlink";
+};
+
+/**
+ * is there a file, folder or something else at the specified path
+ */
+export const doesPathExist = async (path: string): Promise<boolean> => {
+  return (await getType(path)) !== "none";
+};
+
+/**
+ * tries to create a folder (will error if parent folder doesn't exist)
+ */
+export const createFolder = async (path: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    fs.mkdir(path, (error) => {
+      if (error) return reject(error);
+      return resolve();
+    });
+  });
+};
+
+/**
+ * ensures a folder exists at the path (creates parent folders if they don't exist)
+ */
+export const ensureFolderExists = async (path: string): Promise<void> => {
+  const wasFolder = await isFolder(path);
+
+  if (!wasFolder) {
+    return new Promise((resolve, reject) => {
+      fs.mkdir(path, { recursive: true }, (error) => {
+        if (error) return reject(error);
+        return resolve();
+      });
+    });
+  }
+};
+
+/**
+ * ensures an empty folder exists at the path,
+ * removing any folders and files that get in the way
+ */
+export const ensureEmptyFolderExists = async (path: string): Promise<void> => {
+  await ensureFolderExists(path);
 };
