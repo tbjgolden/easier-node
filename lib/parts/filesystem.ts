@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { getLastNBytes, move, trashPath } from "./filesystem.helpers";
 import { JSONData, readJSON, writeJSON } from "./json";
-import { joinPaths, resolvePaths } from "./path";
+import { getParentFolderPath, joinPaths, resolvePaths } from "./path";
 
 /**
  * same as fs.readFile, but assumes the file is a UTF8 string
@@ -314,6 +314,10 @@ export const moveFile = async (
     throw new Error("Expected sourcePath to be a file");
   }
 };
+/**
+ * rename or move a file to a new location
+ */
+export const renameFile = moveFile;
 
 /**
  * move or rename a folder to a new location
@@ -329,6 +333,10 @@ export const moveFolder = async (
     throw new Error("Expected sourcePath to be a folder");
   }
 };
+/**
+ * rename or move a folder to a new location
+ */
+export const renameFolder = moveFolder;
 
 /**
  * move a file to Trash/Recycle bin
@@ -341,6 +349,61 @@ export const removeFile = async (path: string): Promise<void> => {
  * move a folder to Trash/Recycle bin
  */
 export const removeFolder = removeFile;
+
+/**
+ * permanently deletes everything inside a folder
+ */
+export const emptyFolder = async (path: string): Promise<void> => {
+  if (!(await isFolder(path))) {
+    throw new Error("Path is not a directory");
+  }
+
+  await new Promise<void>((resolve, reject) => {
+    fs.readdir(path, { withFileTypes: true }, async (error, dirents) => {
+      if (error) return reject(error);
+
+      for (const dirent of dirents) {
+        const newPath = joinPaths(path, dirent.name);
+        await (dirent.isDirectory() ? deleteFolder(newPath) : deleteFile(newPath));
+      }
+
+      fs.rmdir(path, (error) => {
+        if (error) return reject(error);
+
+        return resolve();
+      });
+    });
+  });
+};
+
+/**
+ * permanently deletes a file
+ */
+export const deleteFile = async (path: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    fs.unlink(path, (error) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve();
+    });
+  });
+};
+
+/**
+ * permanently deletes a folder, and anything inside it
+ */
+export const deleteFolder = async (path: string): Promise<void> => {
+  await emptyFolder(path);
+
+  return new Promise((resolve, reject) => {
+    fs.rmdir(path, (error) => {
+      if (error) return reject(error);
+
+      return resolve();
+    });
+  });
+};
 
 /**
  * determines if the path refers to a file or not
@@ -384,6 +447,8 @@ export const createFolder = async (path: string): Promise<void> => {
 
 /**
  * ensures a folder exists at the path (creates parent folders if they don't exist)
+ *
+ * will error if a file already exists along or at the path
  */
 export const ensureFolderExists = async (path: string): Promise<void> => {
   const wasFolder = await isFolder(path);
@@ -400,8 +465,66 @@ export const ensureFolderExists = async (path: string): Promise<void> => {
 
 /**
  * ensures an empty folder exists at the path,
- * removing any folders and files that get in the way
+ * removing any folders and files that get in the way.
+ *
+ * permanently deletes files and folders already inside path.
+ *
+ * will error if a file already exists along or at the path.
  */
 export const ensureEmptyFolderExists = async (path: string): Promise<void> => {
   await ensureFolderExists(path);
+  await emptyFolder(path);
+};
+
+/**
+ * ensures a file exists at the path (creates parent folders if they don't exist)
+ *
+ * will error if a file already exists along the path or a folder exists at the path
+ */
+export const ensureFileExists = async (path: string): Promise<void> => {
+  const wasFile = await isFile(path);
+
+  if (!wasFile) {
+    await ensureEmptyFileExists(path);
+  }
+};
+
+/**
+ * ensures an empty file exists at the path (creates parent folders if they don't exist).
+ * if the file already exists, this will overwrite the file with an empty one
+ *
+ * will error if a file already exists along the path or a folder exists at the path
+ */
+export const ensureEmptyFileExists = async (path: string): Promise<void> => {
+  const parentFolderPath = getParentFolderPath(path);
+  await ensureFolderExists(parentFolderPath);
+  await writeFile(path, "");
+};
+
+/**
+ * creates a copy of the file at sourcePath at destinationPath
+ *
+ * will error if destinationPath already exists
+ */
+export const copyFile = async (
+  sourcePath: string,
+  destinationPath: string
+): Promise<void> => {
+  await fs.promises.copyFile(sourcePath, destinationPath, fs.constants.COPYFILE_EXCL);
+};
+
+/**
+ * creates a copy of the directory at sourcePath at destinationPath
+ *
+ * will error if destinationPath already exists
+ */
+export const copyFolder = async (
+  sourcePath: string,
+  destinationPath: string
+): Promise<void> => {
+  await fs.promises.cp(sourcePath, destinationPath, {
+    errorOnExist: true,
+    recursive: true,
+    force: false,
+  });
 };

@@ -49,6 +49,7 @@ fs calls use trash, do not follow links
 - [x] async appendFile
 - [x] async appendEntryToCSVFile
 - [x] async appendRowToCSVFile
+- [x] async listFolderContents
 - [x] async listFilesInFolder
 - [x] async listFoldersInFolder
 - [x] async listFilesWithinFolder
@@ -56,26 +57,29 @@ fs calls use trash, do not follow links
 - [x] async isFile
 - [x] async isFolder
 - [x] async isSymlink
+- [x] async doesPathExist
+- [x] async emptyFolder
 - [x] async removeFile
 - [x] async removeFolder
-- [ ] async deleteFile
-- [ ] async deleteFolder
-- [ ] async createFolder
-- [ ] async ensureFolderExists
-- [ ] async ensureEmptyFolderExists
-- [ ] async ensureFileExists
-- [ ] async ensureEmptyFileExists
-- [ ] async emptyFolder
-- [ ] async renameFile
-- [ ] async renameFolder
+- [x] async deleteFile
+- [x] async deleteFolder
+- [x] async createFolder
+- [x] async ensureFolderExists
+- [x] async ensureEmptyFolderExists
+- [x] async ensureFileExists
+- [x] async ensureEmptyFileExists
 - [x] async moveFile
-- [ ] async moveFolder
-- [ ] async copyFile
-- [ ] async copyFolder
+- [x] async renameFile
+- [x] async moveFolder
+- [x] async renameFolder
+- [x] async copyFile
+- [x] async copyFolder
+- [ ] refactor fs callbacks to fs.promises where possible
+- [ ] async copyFolderContentsToFolder
+- [ ] async - some stats helper mountfns - bytes, timeLastChangedMs, createdAtMs
 - [ ] async perMatch // globby
 - [ ] async perFileMatch
 - [ ] async perFolderMatch
-- [ ] async - some stats helper mountfns - bytes, timeLastChangedMs, createdAtMs
 - [x] $CWD
 - [x] $LOG
 - [x] $WARN
