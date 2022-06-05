@@ -97,7 +97,7 @@ test(`parseCSV: Error Tests`, () => {
 });
 
 test(`getFirstNEntriesFromPartialCSV`, async () => {
-  const csvString = await readFile("lib/parts/__fixtures__/recruiters.csv");
+  const csvString = await readFile("lib/parts/__fixtures__/recruiters/all.csv");
   const firstLine = getFirstNEntriesFromPartialCSV(csvString, 1);
   const firstFiveLines = getFirstNEntriesFromPartialCSV(csvString, 5);
   expect(firstLine).toEqual([
@@ -157,7 +157,7 @@ test(`getFirstNEntriesFromPartialCSV`, async () => {
 });
 
 test(`getLastNEntriesFromPartialCSV`, async () => {
-  const csvString = await readFile("lib/parts/__fixtures__/recruiters.csv");
+  const csvString = await readFile("lib/parts/__fixtures__/recruiters/all.csv");
   const lastLine = getLastNEntriesFromPartialCSV(csvString, 1);
   const lastFiveLines = getLastNEntriesFromPartialCSV(csvString, 5);
   expect(lastLine).toEqual([
@@ -184,7 +184,7 @@ test(`getLastNEntriesFromPartialCSV`, async () => {
 });
 
 test(`getFirstCSVFileRow`, async () => {
-  const a = await getFirstCSVFileRow("lib/parts/__fixtures__/recruiters.csv");
+  const a = await getFirstCSVFileRow("lib/parts/__fixtures__/recruiters/all.csv");
   expect(a).toEqual([
     "Date",
     "Company",
@@ -197,12 +197,12 @@ test(`getFirstCSVFileRow`, async () => {
     "dafuq",
     "!",
   ]);
-  const b = await getFirstCSVFileRow("lib/parts/__fixtures__/recruiters.1line.csv");
+  const b = await getFirstCSVFileRow("lib/parts/__fixtures__/recruiters/1line.csv");
   expect(b).toEqual(a);
 
   let didThrow = false;
   try {
-    await getFirstCSVFileRow("lib/parts/__fixtures__/recruiters.fail.csv");
+    await getFirstCSVFileRow("lib/parts/__fixtures__/recruiters/fail.csv");
   } catch {
     didThrow = true;
   }
@@ -211,7 +211,7 @@ test(`getFirstCSVFileRow`, async () => {
 });
 
 test(`getLastCSVFileRow`, async () => {
-  const a = await getLastCSVFileRow("lib/parts/__fixtures__/recruiters.csv");
+  const a = await getLastCSVFileRow("lib/parts/__fixtures__/recruiters/all.csv");
   expect(a).toEqual([
     "2022/01/13",
     "<Our client>",
@@ -224,7 +224,7 @@ test(`getLastCSVFileRow`, async () => {
     "",
     "",
   ]);
-  const b = await getLastCSVFileRow("lib/parts/__fixtures__/recruiters.1line.csv");
+  const b = await getLastCSVFileRow("lib/parts/__fixtures__/recruiters/1line.csv");
 
   expect(b).toEqual([
     "Date",
@@ -241,7 +241,7 @@ test(`getLastCSVFileRow`, async () => {
 
   let didThrow = false;
   try {
-    await getLastCSVFileRow("lib/parts/__fixtures__/recruiters.fail.csv");
+    await getLastCSVFileRow("lib/parts/__fixtures__/recruiters/fail.csv");
   } catch {
     didThrow = true;
   }

@@ -61,6 +61,8 @@
     ]
   },
   "dependencies": {
+    "fast-glob": "^3.2.11",
+    "ignore": "^5.2.0",
     "strip-json-comments": "^4.0.0"
   }
 }

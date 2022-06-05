@@ -4,6 +4,7 @@ import {
   getLastNEntriesFromPartialCSV,
   ParseOptions,
 } from "./csv.helpers";
+import { appendFile } from "./filesystem";
 import { getFirstNBytes, getLastNBytes } from "./filesystem.helpers";
 export { parseCSV } from "./csv.helpers";
 
@@ -51,4 +52,41 @@ export const getLastCSVFileRow = async (
     }
   }
   throw new Error("Could not parse last row");
+};
+
+/**
+ * Append to CSV file by passing an object, with keys as header names and values as
+ * primitives; without needing to look at the whole file
+ */
+export const appendEntryToCSVFile = async <
+  T extends Record<string, string | number | boolean | undefined>
+>(
+  path: string,
+  object: T,
+  parseOptions: Partial<Omit<ParseOptions, "returnOnFail">> = {}
+) => {
+  const headerRow = await getFirstCSVFileRow(path, parseOptions);
+  const newRow = Array.from<string>({ length: headerRow.length }).fill("");
+  for (const [index, headerName] of headerRow.entries()) {
+    newRow[index] = escapeCSVValue((object[headerName] ?? "").toString());
+  }
+  await appendFile(path, newRow.join(","), true);
+};
+
+/**
+ * Append to CSV file by passing an array of primitives
+ */
+export const appendRowToCSVFile = async <T extends Array<string | number | boolean>>(
+  path: string,
+  array: T
+) => {
+  await appendFile(
+    path,
+    array
+      .map((cell) => {
+        return escapeCSVValue(cell.toString());
+      })
+      .join(","),
+    true
+  );
 };

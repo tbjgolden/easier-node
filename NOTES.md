@@ -43,13 +43,14 @@ At this point, more risk comes from importing it as a dependency than bundling i
 fs calls use trash, do not follow links
 
 - [x] async readFile
-- [x] async readJSONFile // supports JSON w/ comments by default
+- [x] async readJSONFile
 - [x] async writeFile
-- [x] async writeJSONFile // supports JSON by default
+- [x] async writeJSONFile
 - [x] async appendFile
-- [ ] async appendFileCSV // accepts obj, ignores trailing newlines
-- [ ] async listFilesInFolder
-- [ ] async listFoldersInFolder
+- [x] async appendEntryToCSVFile
+- [x] async appendRowToCSVFile
+- [x] async listFilesInFolder
+- [x] async listFoldersInFolder
 - [ ] async listFilesWithinFolder
 - [ ] async listFoldersWithinFolder
 - [ ] async perMatch // using some glob style stuff

@@ -1,6 +1,8 @@
 import fs from "node:fs";
+import { $CWD } from "./aliases";
 import { getLastNBytes } from "./filesystem.helpers";
 import { JSONData, readJSON, writeJSON } from "./json";
+import { joinPaths, resolvePaths } from "./path";
 
 /**
  * same as fs.readFile, but assumes the file is a UTF8 string
@@ -110,4 +112,90 @@ export const appendFile = async (
       return resolve();
     });
   });
+};
+
+/**
+ * listsFilesInFolder
+ * */
+export const listFilesInFolder = async (
+  path: string,
+  output: "relative" | "absolute" | "leaves" = "relative"
+): Promise<string[]> => {
+  return new Promise((resolve, reject) => {
+    fs.readdir(path, { withFileTypes: true }, (error, dirents) => {
+      if (error) return reject(error);
+      return resolve(
+        dirents
+          .filter((dirent) => {
+            return dirent.isFile();
+          })
+          .map((dirent) => {
+            if (output === "leaves") {
+              return dirent.name;
+            } else if (output === "relative") {
+              return joinPaths(path, dirent.name);
+            } else {
+              return resolvePaths(path, dirent.name);
+            }
+          })
+      );
+    });
+  });
+};
+
+/**
+ * listFoldersInFolder
+ * */
+export const listFoldersInFolder = async (
+  path: string,
+  output: "relative" | "absolute" | "leaves" = "relative"
+): Promise<string[]> => {
+  return new Promise((resolve, reject) => {
+    fs.readdir(path, { withFileTypes: true }, (error, dirents) => {
+      if (error) return reject(error);
+      return resolve(
+        dirents
+          .filter((dirent) => {
+            return dirent.isDirectory();
+          })
+          .map((dirent) => {
+            if (output === "leaves") {
+              return dirent.name;
+            } else if (output === "relative") {
+              return joinPaths(path, dirent.name);
+            } else {
+              return resolvePaths(path, dirent.name);
+            }
+          })
+      );
+    });
+  });
+};
+
+/**
+ * listsFilesWithinFolder
+ * */
+export const listFilesWithinFolder = async (
+  path: string,
+  output: "relative" | "absolute" = "relative"
+): Promise<string[]> => {
+  const [allFiles, allFolders] = await Promise.all([
+    listFilesInFolder(path, "leaves"),
+    listFoldersInFolder(path, "leaves"),
+  ]);
+
+  const relativePaths = allFiles;
+  const childrenFolders = await Promise.all(
+    allFolders.map(async (folder): Promise<[string, string[]]> => {
+      const newPath = path + "/" + folder;
+      return [newPath, await listFilesWithinFolder(newPath, "relative")];
+    })
+  );
+  for (const [childName, filesInsideChild] of childrenFolders) {
+    for (const fileInsideChild of filesInsideChild) {
+      relativePaths.push(childName + "/" + fileInsideChild);
+    }
+  }
+
+  return relativePaths;
 };
