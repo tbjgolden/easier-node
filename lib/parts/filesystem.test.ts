@@ -66,7 +66,11 @@ test("listFoldersInFolder", async () => {
 
 test("listFolderContents", async () => {
   const directoryPath = "lib/parts/__fixtures__/recruiters";
-  const expected = { files: ["1line.csv", "all.csv", "fail.csv"], folders: ["testDir"] };
+  const expected = {
+    files: ["1line.csv", "all.csv", "fail.csv"],
+    folders: ["testDir"],
+    others: [],
+  };
   const filesRelativePath = await listFolderContents(directoryPath, "relative-path");
   expect(filesRelativePath).toEqual(expected);
 });
@@ -153,16 +157,19 @@ test("moveFile", async () => {
   expect(await listFolderContents(directoryPath)).toEqual({
     files: [".keep"],
     folders: ["nestedTestDir"],
+    others: [],
   });
   await moveFile(directoryPath + "/.keep", directoryPath + "/.keep.1");
   expect(await listFolderContents(directoryPath)).toEqual({
     files: [".keep.1"],
     folders: ["nestedTestDir"],
+    others: [],
   });
   await moveFile(directoryPath + "/.keep.1", directoryPath + "/.keep");
   expect(await listFolderContents(directoryPath)).toEqual({
     files: [".keep"],
     folders: ["nestedTestDir"],
+    others: [],
   });
 });
 
@@ -171,16 +178,19 @@ test("moveFolder", async () => {
   expect(await listFolderContents(directoryPath)).toEqual({
     files: [".keep"],
     folders: ["nestedTestDir"],
+    others: [],
   });
   await moveFolder(directoryPath + "/nestedTestDir", directoryPath + "/nestedTestDir.1");
   expect(await listFolderContents(directoryPath)).toEqual({
     files: [".keep"],
     folders: ["nestedTestDir.1"],
+    others: [],
   });
   await moveFolder(directoryPath + "/nestedTestDir.1", directoryPath + "/nestedTestDir");
   expect(await listFolderContents(directoryPath)).toEqual({
     files: [".keep"],
     folders: ["nestedTestDir"],
+    others: [],
   });
 });
 

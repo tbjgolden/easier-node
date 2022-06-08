@@ -63,6 +63,7 @@ fs calls use trash, do not follow links
 - [x] async removeFolder
 - [x] async deleteFile
 - [x] async deleteFolder
+- [x] async deleteAny
 - [x] async createFolder
 - [x] async ensureFolderExists
 - [x] async ensureEmptyFolderExists
@@ -74,17 +75,13 @@ fs calls use trash, do not follow links
 - [x] async renameFolder
 - [x] async copyFile
 - [x] async copyFolder
-- [ ] refactor fs callbacks to fs.promises where possible
-- [ ] async copyFolderContentsToFolder
-- [ ] async - some stats helper mountfns - bytes, timeLastChangedMs, createdAtMs
+- [x] async copyFolderContentsToFolder
+- [x] async getFileBytes
+- [x] async getFileCreatedDate
+- [x] async getFileLastChangeDate
 - [ ] async perMatch // globby
 - [ ] async perFileMatch
 - [ ] async perFolderMatch
-- [x] $CWD
-- [x] $LOG
-- [x] $WARN
-- [x] $ERROR
-- [x] $DEBUG
 
 ### child_process
 

@@ -1,5 +1,4 @@
 import nodePath from "node:path";
-import { $CWD } from "./aliases";
 
 /**
  * Identical to path.join:
@@ -20,7 +19,7 @@ export const joinPaths = (pathA: string, pathB: string, ...extraPaths: string[])
  * // returns "/b/c"
  * resolvePaths("/a", "/b/c")
  * @example
- * // returns ensurePathEndsWithSlash($CWD()) + "a/b/c"
+ * // returns ensurePathEndsWithSlash(process.cwd()) + "a/b/c"
  * resolvePaths("a", "b/c")
  * */
 export const resolvePaths = (pathA: string, pathB: string, ...extraPaths: string[]) => {
@@ -105,17 +104,17 @@ export const ensurePathEndsWithSlash = (path: string): string => {
 /**
  * converts the path to a normalized absolute path
  * @example
- * // returns ensurePathEndsWithSlash($CWD()) + "hello/world/"
+ * // returns ensurePathEndsWithSlash(process.cwd()) + "hello/world/"
  * getAbsolutePath("hello/world")
  */
 export const getAbsolutePath = (path: string): string => {
-  return resolvePaths($CWD(), path);
+  return resolvePaths(process.cwd(), path);
 };
 
 /**
  * get the normalized absolute path of the parent folder
  * @example
- * // returns ensurePathEndsWithSlash($CWD()) + "hello"
+ * // returns ensurePathEndsWithSlash(process.cwd()) + "hello"
  * getParentFolderPath("hello/world")
  */
 export const getParentFolderPath = (path: string): string => {

@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import fs, { Dirent } from "node:fs";
 import { getLastNBytes, move, trashPath } from "./filesystem.helpers";
 import { JSONData, readJSON, writeJSON } from "./json";
 import { getParentFolderPath, joinPaths, resolvePaths } from "./path";
@@ -11,12 +11,7 @@ import { getParentFolderPath, joinPaths, resolvePaths } from "./path";
  * await readFile("./reset.css")
  * */
 export const readFile = async (path: string): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(path, "utf8", (error, string) => {
-      if (error) return reject(error);
-      return resolve(string);
-    });
-  });
+  return fs.promises.readFile(path, "utf8");
 };
 
 /**
@@ -38,12 +33,7 @@ export const readJSONFile = async (path: string): Promise<string> => {
  * await writeFile("./reset.css", "html, body, div, span, [...]")
  * */
 export const writeFile = async (path: string, newFileString: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(path, newFileString, (error) => {
-      if (error) return reject(error);
-      return resolve();
-    });
-  });
+  return fs.promises.writeFile(path, newFileString);
 };
 
 /**
@@ -106,39 +96,35 @@ export const appendFile = async (
     }
   }
 
-  return new Promise((resolve, reject) => {
-    fs.appendFile(path, stringToAppend, (error) => {
-      if (error) return reject(error);
-      return resolve();
-    });
+  return fs.promises.appendFile(path, stringToAppend);
+};
+
+type Output = "absolute" | "relative-path" | "relative-cwd";
+const filterInFolder = async (
+  path: string,
+  output: Output,
+  filterFunction = (_dirent: Dirent) => {
+    return true;
+  }
+): Promise<string[]> => {
+  const dirents = await fs.promises.readdir(path, { withFileTypes: true });
+  // eslint-disable-next-line unicorn/no-array-callback-reference
+  return dirents.filter(filterFunction).map((dirent) => {
+    if (output === "relative-path") return dirent.name;
+    else if (output === "relative-cwd") return joinPaths(path, dirent.name);
+    else return resolvePaths(path, dirent.name);
   });
 };
+
 /**
  * get a list of the files directly inside a folder
  * */
 export const listFilesInFolder = async (
   path: string,
-  output: "absolute" | "relative-path" | "relative-cwd" = "relative-path"
+  output: Output = "relative-path"
 ): Promise<string[]> => {
-  return new Promise((resolve, reject) => {
-    fs.readdir(path, { withFileTypes: true }, (error, dirents) => {
-      if (error) return reject(error);
-      return resolve(
-        dirents
-          .filter((dirent) => {
-            return dirent.isFile();
-          })
-          .map((dirent) => {
-            if (output === "relative-path") {
-              return dirent.name;
-            } else if (output === "relative-cwd") {
-              return joinPaths(path, dirent.name);
-            } else {
-              return resolvePaths(path, dirent.name);
-            }
-          })
-      );
-    });
+  return filterInFolder(path, output, (dirent) => {
+    return dirent.isFile();
   });
 };
 
@@ -147,27 +133,10 @@ export const listFilesInFolder = async (
  * */
 export const listFoldersInFolder = async (
   path: string,
-  output: "absolute" | "relative-path" | "relative-cwd" = "relative-path"
+  output: Output = "relative-path"
 ): Promise<string[]> => {
-  return new Promise((resolve, reject) => {
-    fs.readdir(path, { withFileTypes: true }, (error, dirents) => {
-      if (error) return reject(error);
-      return resolve(
-        dirents
-          .filter((dirent) => {
-            return dirent.isDirectory();
-          })
-          .map((dirent) => {
-            if (output === "relative-path") {
-              return dirent.name;
-            } else if (output === "relative-cwd") {
-              return joinPaths(path, dirent.name);
-            } else {
-              return resolvePaths(path, dirent.name);
-            }
-          })
-      );
-    });
+  return filterInFolder(path, output, (dirent) => {
+    return dirent.isDirectory();
   });
 };
 
@@ -176,37 +145,27 @@ export const listFoldersInFolder = async (
  * */
 export const listFolderContents = async (
   path: string,
-  output: "absolute" | "relative-path" | "relative-cwd" = "relative-path"
-): Promise<{ folders: string[]; files: string[] }> => {
+  output: Output = "relative-path"
+) => {
   if (!(await isFolder(path))) {
     throw new Error("Path is not a directory");
   }
 
-  return new Promise((resolve, reject) => {
-    fs.readdir(path, { withFileTypes: true }, (error, dirents) => {
-      if (error) return reject(error);
+  const folders: string[] = [];
+  const files: string[] = [];
+  const others: string[] = [];
 
-      const result: { folders: string[]; files: string[] } = { folders: [], files: [] };
+  for (const dirent of await fs.promises.readdir(path, { withFileTypes: true })) {
+    let subPath = dirent.name;
+    if (output === "relative-cwd") subPath = joinPaths(subPath, dirent.name);
+    else if (output === "absolute") subPath = resolvePaths(subPath, dirent.name);
 
-      for (const dirent of dirents) {
-        let listKey: "files" | "folders" | undefined;
-        if (dirent.isFile()) listKey = "files";
-        else if (dirent.isDirectory()) listKey = "folders";
+    if (dirent.isFile()) files.push(subPath);
+    else if (dirent.isDirectory()) folders.push(subPath);
+    else others.push(subPath);
+  }
 
-        if (listKey !== undefined) {
-          if (output === "relative-path") {
-            result[listKey].push(dirent.name);
-          } else if (output === "relative-cwd") {
-            result[listKey].push(joinPaths(path, dirent.name));
-          } else {
-            result[listKey].push(resolvePaths(path, dirent.name));
-          }
-        }
-      }
-
-      return resolve(result);
-    });
-  });
+  return { folders, files, others };
 };
 
 /**
@@ -214,7 +173,7 @@ export const listFolderContents = async (
  * */
 export const listFilesWithinFolder = async (
   path: string,
-  output: "absolute" | "relative-path" | "relative-cwd" = "relative-path"
+  output: Output = "relative-path"
 ): Promise<string[]> => {
   const results = await recursiveListFilesWithinFolder(path);
   if (output === "absolute") {
@@ -254,7 +213,7 @@ const recursiveListFilesWithinFolder = async (path: string): Promise<string[]> =
  * */
 export const listFoldersWithinFolder = async (
   path: string,
-  output: "absolute" | "relative-path" | "relative-cwd" = "relative-path"
+  output: Output = "relative-path"
 ): Promise<string[]> => {
   const results = await recursiveListFoldersWithinFolder(path);
   if (output === "absolute") {
@@ -355,39 +314,28 @@ export const removeFolder = removeFile;
  */
 export const emptyFolder = async (path: string): Promise<void> => {
   if (!(await isFolder(path))) {
-    throw new Error("Path is not a directory");
+    throw new Error("Path is not a folder");
   }
 
-  await new Promise<void>((resolve, reject) => {
-    fs.readdir(path, { withFileTypes: true }, async (error, dirents) => {
-      if (error) return reject(error);
-
-      for (const dirent of dirents) {
-        const newPath = joinPaths(path, dirent.name);
-        await (dirent.isDirectory() ? deleteFolder(newPath) : deleteFile(newPath));
-      }
-
-      fs.rmdir(path, (error) => {
-        if (error) return reject(error);
-
-        return resolve();
-      });
-    });
-  });
+  const { files, folders, others } = await listFolderContents(path, "absolute");
+  await Promise.all([
+    ...files.map((file) => {
+      return deleteFile(file);
+    }),
+    ...others.map((other) => {
+      return deleteFile(other);
+    }),
+    ...folders.map((folder) => {
+      return deleteFolder(folder);
+    }),
+  ]);
 };
 
 /**
  * permanently deletes a file
  */
 export const deleteFile = async (path: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    fs.unlink(path, (error) => {
-      if (error) {
-        return reject(error);
-      }
-      return resolve();
-    });
-  });
+  return fs.promises.unlink(path);
 };
 
 /**
@@ -395,14 +343,14 @@ export const deleteFile = async (path: string): Promise<void> => {
  */
 export const deleteFolder = async (path: string): Promise<void> => {
   await emptyFolder(path);
+  return fs.promises.rmdir(path);
+};
 
-  return new Promise((resolve, reject) => {
-    fs.rmdir(path, (error) => {
-      if (error) return reject(error);
-
-      return resolve();
-    });
-  });
+/**
+ * permanently deletes anything at the path
+ */
+export const deleteAny = async (path: string): Promise<void> => {
+  await ((await isFolder(path)) ? deleteFolder(path) : fs.promises.unlink(path));
 };
 
 /**
@@ -437,12 +385,7 @@ export const doesPathExist = async (path: string): Promise<boolean> => {
  * tries to create a folder (will error if parent folder doesn't exist)
  */
 export const createFolder = async (path: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    fs.mkdir(path, (error) => {
-      if (error) return reject(error);
-      return resolve();
-    });
-  });
+  return fs.promises.mkdir(path);
 };
 
 /**
@@ -451,15 +394,8 @@ export const createFolder = async (path: string): Promise<void> => {
  * will error if a file already exists along or at the path
  */
 export const ensureFolderExists = async (path: string): Promise<void> => {
-  const wasFolder = await isFolder(path);
-
-  if (!wasFolder) {
-    return new Promise((resolve, reject) => {
-      fs.mkdir(path, { recursive: true }, (error) => {
-        if (error) return reject(error);
-        return resolve();
-      });
-    });
+  if (!(await isFolder(path))) {
+    await fs.promises.mkdir(path, { recursive: true });
   }
 };
 
@@ -508,13 +444,18 @@ export const ensureEmptyFileExists = async (path: string): Promise<void> => {
  */
 export const copyFile = async (
   sourcePath: string,
-  destinationPath: string
+  destinationPath: string,
+  shouldReplace = false
 ): Promise<void> => {
-  await fs.promises.copyFile(sourcePath, destinationPath, fs.constants.COPYFILE_EXCL);
+  await fs.promises.copyFile(
+    sourcePath,
+    destinationPath,
+    shouldReplace ? fs.constants.COPYFILE_FICLONE : fs.constants.COPYFILE_EXCL
+  );
 };
 
 /**
- * creates a copy of the directory at sourcePath at destinationPath
+ * creates a copy of the folder and anything inside at sourcePath at destinationPath
  *
  * will error if destinationPath already exists
  */
@@ -527,4 +468,58 @@ export const copyFolder = async (
     recursive: true,
     force: false,
   });
+};
+
+/**
+ * copies the contents of the folder at sourcePath into the folder at destinationPath
+ */
+export const copyFolderContentsToFolder = async (
+  sourcePath: string,
+  destinationPath: string,
+  shouldReplaceFiles = false
+): Promise<void> => {
+  await ensureFolderExists(destinationPath);
+  const { folders, files } = await listFolderContents(sourcePath);
+  await Promise.all([
+    ...folders.map(async (folder) => {
+      await copyFolderContentsToFolder(
+        joinPaths(sourcePath, folder),
+        joinPaths(destinationPath, folder),
+        shouldReplaceFiles
+      );
+    }),
+    ...files.map(async (file) => {
+      await copyFile(
+        joinPaths(sourcePath, file),
+        joinPaths(destinationPath, file),
+        shouldReplaceFiles
+      );
+    }),
+  ]);
+};
+
+/**
+ * gets a files size in bytes
+ */
+export const getFileBytes = async (path: string): Promise<number> => {
+  const stats = await fs.promises.lstat(path);
+  return stats.size;
+};
+
+/**
+ * gets the date a file was created
+ */
+export const getFileCreatedDate = async (path: string): Promise<Date> => {
+  const stats = await fs.promises.lstat(path);
+  return new Date(stats.birthtimeMs);
+};
+
+/**
+ * gets the date a file was changed
+ *
+ * note: a file that is moved or renamed is not considered changed
+ */
+export const getFileLastChangeDate = async (path: string): Promise<Date> => {
+  const stats = await fs.promises.lstat(path);
+  return new Date(stats.mtimeMs);
 };
