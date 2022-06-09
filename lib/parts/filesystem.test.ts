@@ -10,10 +10,13 @@ import {
   listFoldersWithinFolder,
   moveFile,
   moveFolder,
+  perFileMatch,
+  perFolderMatch,
   readFile,
   writeFile,
 } from "./filesystem";
 import fs from "node:fs/promises";
+import { getRelativePath } from "./path";
 
 test("appendFile", async () => {
   const filePath = "lib/parts/__fixtures__/recruiters/testDir/.keep";
@@ -192,6 +195,64 @@ test("moveFolder", async () => {
     folders: ["nestedTestDir"],
     others: [],
   });
+});
+
+test("perFileMatch", async () => {
+  const directoryPath = "lib/parts/__fixtures__/recruiters/testDir";
+  const cwd = process.cwd();
+  const expected = [directoryPath + "/.keep", directoryPath + "/nestedTestDir/.keep"];
+  expect(
+    await perFileMatch(directoryPath + "/**", (filePath: string) => {
+      return getRelativePath(cwd, filePath);
+    })
+  ).toEqual(expected);
+  expect(
+    await perFileMatch(
+      "**",
+      (filePath: string) => {
+        return getRelativePath(cwd, filePath);
+      },
+      cwd + "/" + directoryPath
+    )
+  ).toEqual(expected);
+  expect(
+    await perFileMatch(
+      "*",
+      (filePath: string) => {
+        return getRelativePath(cwd, filePath);
+      },
+      cwd + "/" + directoryPath
+    )
+  ).toEqual([expected[0]]);
+  expect(
+    await perFileMatch(
+      "*/*",
+      (filePath: string) => {
+        return getRelativePath(cwd, filePath);
+      },
+      cwd + "/" + directoryPath
+    )
+  ).toEqual([expected[1]]);
+});
+
+test("perFolderMatch", async () => {
+  const directoryPath = "lib/parts/__fixtures__/recruiters/testDir";
+  const cwd = process.cwd();
+  const expected = [directoryPath + "/nestedTestDir"];
+  expect(
+    await perFolderMatch(directoryPath + "/**", (filePath: string) => {
+      return getRelativePath(cwd, filePath);
+    })
+  ).toEqual(expected);
+  expect(
+    await perFolderMatch(
+      "**",
+      (filePath: string) => {
+        return getRelativePath(cwd, filePath);
+      },
+      cwd + "/" + directoryPath
+    )
+  ).toEqual(expected);
 });
 
 afterAll(async () => {

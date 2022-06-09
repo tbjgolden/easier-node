@@ -1,5 +1,6 @@
 import fs, { Dirent } from "node:fs";
 import { getLastNBytes, move, trashPath } from "./filesystem.helpers";
+import { globToRegex } from "./glob";
 import { JSONData, readJSON, writeJSON } from "./json";
 import { getParentFolderPath, joinPaths, resolvePaths } from "./path";
 
@@ -522,4 +523,48 @@ export const getFileCreatedDate = async (path: string): Promise<Date> => {
 export const getFileLastChangeDate = async (path: string): Promise<Date> => {
   const stats = await fs.promises.lstat(path);
   return new Date(stats.mtimeMs);
+};
+
+/**
+ *
+ */
+export const perFileMatch = async <T>(
+  globString: string,
+  perMatchFunction: ((matchPath: string) => T) | ((matchPath: string) => Promise<T>),
+  basePath = process.cwd()
+): Promise<T[]> => {
+  const filesWithinFolder = await listFilesWithinFolder(basePath, "absolute");
+  const regex = globToRegex(globString, basePath);
+
+  return Promise.all(
+    filesWithinFolder
+      .filter((filePath) => {
+        return regex.test(filePath);
+      })
+      .map(async (filePath) => {
+        return perMatchFunction(filePath);
+      })
+  );
+};
+
+/**
+ *
+ */
+export const perFolderMatch = async <T>(
+  globString: string,
+  perMatchFunction: ((matchPath: string) => T) | ((matchPath: string) => Promise<T>),
+  basePath = process.cwd()
+): Promise<T[]> => {
+  const foldersWithinFolder = await listFoldersWithinFolder(basePath, "absolute");
+  const regex = globToRegex(globString, basePath);
+
+  return Promise.all(
+    foldersWithinFolder
+      .filter((filePath) => {
+        return regex.test(filePath);
+      })
+      .map(async (filePath) => {
+        return perMatchFunction(filePath);
+      })
+  );
 };

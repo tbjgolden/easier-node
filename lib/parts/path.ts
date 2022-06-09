@@ -27,6 +27,13 @@ export const resolvePaths = (pathA: string, pathB: string, ...extraPaths: string
 };
 
 /**
+ * Identical to path.relative
+ * */
+export const getRelativePath = (fromPath: string, toPath: string) => {
+  return nodePath.relative(fromPath, toPath);
+};
+
+/**
  * Identical to path.normalize (for normalized absolute paths, use getAbsolutePath):
  * @example
  * // returns "/b"

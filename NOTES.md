@@ -79,9 +79,8 @@ fs calls use trash, do not follow links
 - [x] async getFileBytes
 - [x] async getFileCreatedDate
 - [x] async getFileLastChangeDate
-- [ ] async perMatch // globby
-- [ ] async perFileMatch
-- [ ] async perFolderMatch
+- [x] async perFileMatch
+- [x] async perFolderMatch
 
 ### child_process
 
