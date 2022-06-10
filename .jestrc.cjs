@@ -10,9 +10,14 @@ module.exports = {
   // ],
   coverageReporters: ["json-summary", "text"],
   errorOnDeprecated: true,
+  extensionsToTreatAsEsm: [".ts"],
   // globalSetup: undefined,
   // globalTeardown: undefined,
-  // globals: {},
+  globals: {
+    "ts-jest": {
+      useESM: true,
+    },
+  },
   // moduleFileExtensions: [
   //   "js",
   //   "jsx",
@@ -21,10 +26,11 @@ module.exports = {
   //   "json",
   //   "node"
   // ],
+  moduleNameMapper: {
+    "^(\\.{1,2}/.*)\\.js$": "$1",
+  },
+  preset: "ts-jest/presets/default-esm", // or other ESM presets
   testEnvironment: "node",
   testMatch: ["<rootDir>/lib/**/*.test.[tj]s?(x)"],
-  transform: {
-    "\\.ts$": "esbuild-runner/jest",
-  },
   // timers: "real"
 };
