@@ -17,12 +17,12 @@
     ".editorconfig": true,
     ".eslintcache": true,
     ".prettierignore": true,
-    // ".eslintrc.cjs": true,
+    ".eslintrc.cjs": true,
     ".jestrc.cjs": true,
     ".prettierrc.cjs": true,
     ".lintstagedrc.cjs": true,
     "package-lock.json": true,
-    // "tsconfig.json": true,
+    "tsconfig.json": true,
     "LICENSE.txt": true,
     "coverage": true
   }
