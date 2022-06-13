@@ -7,7 +7,7 @@ on:
 jobs:
   release:
     name: release
-    if: github.repository != 'tbjgolden/just-build'
+    if: github.repository != 'tbjgolden/easier-node'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

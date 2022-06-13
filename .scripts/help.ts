@@ -4,17 +4,17 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { getPackageRoot } from "./deps/package";
 
-const bold = (str: string): string => {
-  return `\u001B[1m${str}\u001B[0m`;
+const bold = (string_: string): string => {
+  return `\u001B[1m${string_}\u001B[0m`;
 };
-const yellow = (str: string): string => {
-  return `\u001B[33m${str}\u001B[0m`;
+const yellow = (string_: string): string => {
+  return `\u001B[33m${string_}\u001B[0m`;
 };
-const red = (str: string): string => {
-  return `\u001B[31m${str}\u001B[0m`;
+const red = (string_: string): string => {
+  return `\u001B[31m${string_}\u001B[0m`;
 };
-const grey = (str: string): string => {
-  return `\u001B[2m${str}\u001B[0m`;
+const grey = (string_: string): string => {
+  return `\u001B[2m${string_}\u001B[0m`;
 };
 
 const main = async () => {

@@ -68,5 +68,11 @@ module.exports = {
         "@typescript-eslint/no-var-requires": "off",
       },
     },
+    {
+      files: ["tests/**"],
+      rules: {
+        "no-console": "off",
+      },
+    },
   ],
 };
