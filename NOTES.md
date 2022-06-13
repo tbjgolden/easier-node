@@ -84,20 +84,19 @@ fs calls use trash, do not follow links
 
 ### child_process
 
-- [ ] execa (wrappers?)
-- [ ] spawn (w/ pipe?)
-- [ ] perhaps a helper for running node (perhaps with swc)
+- [x] execa
+<!-- - [ ] perhaps a helper for running node (perhaps with xnr) -->
 
 ### fetch/http
 
-- [ ] got (wrappers?)
+- [x] got
 
 ### url
 
-- [ ] function to inferPort from a url
-- [ ] sindresorhud normalize url?
-- [ ] joinURLs
-- [ ] resolveURLs
+- [x] parseURL
+- [x] sindresorhud normalize url
+- [x] joinURLs
+- [x] resolveURLs
 
 ### path
 
@@ -110,13 +109,8 @@ fs calls use trash, do not follow links
 
 ### dns
 
-- [ ] lookup
-
-### http
-
-- [ ] serveFile
-- [ ] serveDirectory
-- [ ] serveStaticSite (scans files to understand how to serve)
+- [x] dnsLookup
+- [x] dnsResolve
 
 ### net
 
@@ -153,13 +147,6 @@ fs calls use trash, do not follow links
 
 - [ ] pretty
 
-### zlib
-
-- [ ] compressGzip
-- [ ] compressBrotli
-- [ ] decompressGzip
-- [ ] decompressBrotli
-
 ### process
 
 - [ ] isLinux
@@ -176,10 +163,31 @@ fs calls use trash, do not follow links
 - [ ] hashFastHex
 - [ ] hashSecureHex
 
+### misc
+
+- [ ] \_\_filename polyfill
+- [ ] \_\_dirname polyfill
+- [ ] require.main polyfill
+
+# Stage 2.
+
 ### tty
 
 - [ ] isTerminal
 - [ ] isInteractive
+
+### http
+
+- [ ] serveFile
+- [ ] serveDirectory
+- [ ] serveStaticSite (scans files to understand how to serve)
+
+### zlib
+
+- [ ] compressGzip
+- [ ] compressBrotli
+- [ ] decompressGzip
+- [ ] decompressBrotli
 
 ## misc
 
@@ -195,14 +203,7 @@ fs calls use trash, do not follow links
 - [ ] validator
 - [ ] lru-cache
 
----
-
-- [ ] $THIS_FILE_PATH (not sure if possible, perhaps requires setFile)
-- [ ] $THIS_FOLDER_PATH (not sure if possible, perhaps requires setFile)
-
----
-
-# Stage 2.
+# Stage 3
 
 # YES
 
