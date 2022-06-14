@@ -84,18 +84,16 @@ fs calls use trash, do not follow links
 
 ### child_process
 
-- [ ] execa (wrappers?)
-- [ ] spawn (w/ pipe?)
-- [ ] perhaps a helper for running node (perhaps with swc)
+- [x] execa
 
 ### fetch/http
 
-- [ ] got (wrappers?)
+- [x] got
 
 ### url
 
-- [ ] function to inferPort from a url
-- [ ] sindresorhud normalize url?
+- [x] function to inferPort from a url
+- [x] sindresorhud normalize url?
 - [ ] joinURLs
 - [ ] resolveURLs
 
