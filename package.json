@@ -14,11 +14,9 @@
     "!win32"
   ],
   "scripts": {
-    "help": "esr ./.scripts/help.ts",
+    "help": "xnr ./.scripts/help.ts",
     "help:name": "echo 'Rename npm project'",
-    "name": "esr ./.scripts/name.ts",
-    "help:build": "echo 'Build npm project'",
-    "build": "esr ./.scripts/build.ts",
+    "name": "xnr ./.scripts/name.ts",
     "help:test": "echo 'Run tests once'",
     "test": "jest -c ./.jestrc.cjs",
     "help:coverage": "echo 'Run tests and collect coverage'",
@@ -39,8 +37,6 @@
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.13.0",
     "enquirer": "^2.3.6",
-    "esbuild": "^0.14.11",
-    "esbuild-runner": "^2.2.1",
     "eslint": "^8.6.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -62,9 +58,11 @@
     ]
   },
   "dependencies": {
+    "@swc-node/jest": "^1.5.2",
     "execa": "6.1.0",
     "got": "12.1.0",
     "normalize-url": "7.0.3",
-    "sucrase": "^3.21.0"
+    "sucrase": "^3.21.0",
+    "xnr": "^0.2.0"
   }
 }

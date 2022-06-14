@@ -1,4 +1,5 @@
 import { URL } from "node:url";
+import { default as normalizeURL } from "normalize-url";
 export { default as normalizeURL } from "normalize-url";
 
 const DEFAULT_PORT_MAP = new Map<string, number>([
@@ -24,12 +25,12 @@ export type ParsedURL = {
   host: string;
   hostname: string;
   href: string;
-  readonly origin: string;
+  origin: string;
   password: string;
   pathname: string;
   protocol: string;
   search: string;
-  readonly searchParams: URLSearchParams;
+  searchParams: URLSearchParams;
   username: string;
   port: number | "";
 };
@@ -37,7 +38,17 @@ export type ParsedURL = {
 export const parseURL = (inputURL: string, baseURL?: string): ParsedURL => {
   const rawURL = new URL(inputURL, baseURL);
   return {
-    ...rawURL,
+    hash: rawURL.hash,
+    host: rawURL.host,
+    hostname: rawURL.hostname,
+    href: rawURL.href,
+    origin: rawURL.origin,
+    password: rawURL.password,
+    pathname: rawURL.pathname,
+    protocol: rawURL.protocol,
+    search: rawURL.search,
+    searchParams: rawURL.searchParams,
+    username: rawURL.username,
     port:
       rawURL.port === ""
         ? getDefaultPortForProtocol(rawURL.protocol) ?? ""
@@ -47,5 +58,5 @@ export const parseURL = (inputURL: string, baseURL?: string): ParsedURL => {
 
 export const resolveURLs = (urlA: string, urlB: string): string => {
   const url = parseURL(urlB, urlA);
-  return url.href;
+  return normalizeURL(url.href);
 };
