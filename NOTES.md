@@ -124,23 +124,21 @@ fs calls use trash, do not follow links
 
 ### string_decoder
 
+- [x] reverseString
 - [x] toUTF8String
 - [x] toBase64String
 - [x] toBase64URLString
 - [x] toHexString
-- [ ] fromBase64String
-- [ ] fromBase64URLString
-- [ ] fromHexString
+- [x] fromBase64String
+- [x] fromBase64URLString
+- [x] fromHexString
 
 ### timers
 
-- [ ] wait
-- [ ] waitUntil
-- [ ] debounce
-- [ ] throttle
-- [ ] ? timeout
-- [ ] ? interval
-- [ ] ? every
+- [x] delay
+- [x] until
+- [x] debounce
+- [x] throttle
 
 ### util
 
