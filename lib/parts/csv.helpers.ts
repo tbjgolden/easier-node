@@ -199,7 +199,7 @@ export const getFirstNEntriesFromPartialCSV = (
     if (nonEmptyRows.length === n) {
       return nonEmptyRows;
     }
-    if (row.length > 0) {
+    if (row.length > 0 && (row.length !== 1 || row[0] !== "")) {
       nonEmptyRows.push(row);
       if (nonEmptyRows.length === n && parsed.error === undefined) {
         return nonEmptyRows;
@@ -231,7 +231,7 @@ export const getLastNEntriesFromPartialCSV = (
     if (nonEmptyRows.length === n) {
       return nonEmptyRows;
     }
-    if (row.length > 0) {
+    if (row.length > 0 && (row.length !== 1 || row[0] !== "")) {
       const reversedRow: string[] = [];
       for (let index = row.length - 1; index >= 0; index--) {
         reversedRow.push(reverseSafe(row[index]));

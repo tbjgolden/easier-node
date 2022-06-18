@@ -570,15 +570,21 @@ export const perFolderMatch = async <T>(
   );
 };
 
-export const perLine = async (path: string, processLineFunction: ((line: string) => void | Promise<void>)): Promise<void> => {
+/**
+ *
+ */
+export const perLine = async (
+  path: string,
+  processLineFunction: (line: string) => void | Promise<void>
+): Promise<void> => {
   const fileStream = fs.createReadStream(path);
 
   const rl = readline.createInterface({
     input: fileStream,
-    crlfDelay: Number.POSITIVE_INFINITY
+    crlfDelay: Number.POSITIVE_INFINITY,
   });
 
   for await (const line of rl) {
-    await processLineFunction(line)
+    await processLineFunction(line);
   }
-}
+};

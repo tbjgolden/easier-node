@@ -12,6 +12,7 @@ import {
   moveFolder,
   perFileMatch,
   perFolderMatch,
+  perLine,
   readFile,
   writeFile,
 } from "./filesystem";
@@ -253,6 +254,26 @@ test("perFolderMatch", async () => {
       cwd + "/" + directoryPath
     )
   ).toEqual(expected);
+});
+
+test("perLine", async () => {
+  const lines: string[] = [];
+  await perLine("lib/parts/__fixtures__/recruiters/all.csv", (line: string) => {
+    if (line.startsWith("2022/02/23,")) {
+      lines.push(line);
+    }
+  });
+
+  expect(lines).toEqual([
+    "2022/02/23,<Our client>,LinkedIn (DM),No,Yes,No,No,High,,",
+    "2022/02/23,<Open to opportunities>,LinkedIn (DM),No,Yes,No,No,High,,",
+    "2022/02/23,<Our client>,LinkedIn (DM),No,Yes,No,No,Low,,",
+    "2022/02/23,Ecologi,LinkedIn (DM),Yes,Yes,No,No,Moderate,,",
+    "2022/02/23,Signal AI,LinkedIn (Req),No,Yes,No,No,High,,",
+    "2022/02/23,<Open to opportunities>,LinkedIn (Req),No,Yes,No,No,Moderate,,",
+    "2022/02/23,<Our client>,Email,No,Yes,No,No,High,,",
+    "2022/02/23,<Open to opportunities>,Email,No,Yes,No,No,High,,",
+  ]);
 });
 
 afterAll(async () => {

@@ -120,7 +120,7 @@ fs calls use trash, do not follow links
 
 ### readline
 
-- [ ] perLine (iterator)
+- [x] perLine (iterator)
 
 ### string_decoder
 
