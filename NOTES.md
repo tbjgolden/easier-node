@@ -114,9 +114,9 @@ fs calls use trash, do not follow links
 
 ### net
 
-- [ ] isIP
-- [ ] isIPv4
-- [ ] isIPv6
+- [x] isIP
+- [x] isIPv4
+- [x] isIPv6
 
 ### readline
 

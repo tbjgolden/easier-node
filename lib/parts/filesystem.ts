@@ -1,4 +1,5 @@
 import fs, { Dirent } from "node:fs";
+import readline from "node:readline";
 import { getLastNBytes, move, trashPath } from "./filesystem.helpers";
 import { globToRegex } from "./glob";
 import { JSONData, readJSON, writeJSON } from "./json";
@@ -568,3 +569,16 @@ export const perFolderMatch = async <T>(
       })
   );
 };
+
+export const perLine = async (path: string, processLineFunction: ((line: string) => void | Promise<void>)): Promise<void> => {
+  const fileStream = fs.createReadStream(path);
+
+  const rl = readline.createInterface({
+    input: fileStream,
+    crlfDelay: Number.POSITIVE_INFINITY
+  });
+
+  for await (const line of rl) {
+    await processLineFunction(line)
+  }
+}
