@@ -1,4 +1,4 @@
-import { reverseSafe } from "./string.helpers";
+import { reverseString } from "./string";
 
 const NO_ESCAPE_NEEDED_REGEX = /^[^\s",]([^\n\r",]*[^\s",])?$|^$/;
 
@@ -218,7 +218,7 @@ export const getLastNEntriesFromPartialCSV = (
   parseOptions: Partial<Omit<ParseOptions, "returnOnFail">> = {}
 ): string[][] | "incomplete" => {
   const withNoCRLF = partialEndString.replace(CRLF_REGEX, "\n");
-  const reversed = reverseSafe(withNoCRLF);
+  const reversed = reverseString(withNoCRLF);
   const parsed = parseCSV(reversed, {
     ...parseOptions,
     returnOnFail: true,
@@ -234,7 +234,7 @@ export const getLastNEntriesFromPartialCSV = (
     if (row.length > 0 && (row.length !== 1 || row[0] !== "")) {
       const reversedRow: string[] = [];
       for (let index = row.length - 1; index >= 0; index--) {
-        reversedRow.push(reverseSafe(row[index]));
+        reversedRow.push(reverseString(row[index]));
       }
       nonEmptyRows.push(reversedRow);
       if (nonEmptyRows.length === n && parsed.error === undefined) {

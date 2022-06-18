@@ -124,14 +124,13 @@ fs calls use trash, do not follow links
 
 ### string_decoder
 
-- [ ] toUTF8
-- [ ] toBase64
-- [ ] toBase64URL
-- [ ] toHex
-- [ ] fromUTF8
-- [ ] fromBase64
-- [ ] fromBase64URL
-- [ ] fromHex
+- [x] toUTF8String
+- [x] toBase64String
+- [x] toBase64URLString
+- [x] toHexString
+- [ ] fromBase64String
+- [ ] fromBase64URLString
+- [ ] fromHexString
 
 ### timers
 
