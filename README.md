@@ -1,5 +1,7 @@
 # easier-node
 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/tbjgolden/easier-node/tests) ![npm](https://img.shields.io/npm/v/easier-node)
+
 > Node.js, but with a modern API
 
 Assumes Node 16+
