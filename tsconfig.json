@@ -3,7 +3,7 @@
     "target": "es2017",
     "lib": ["es2021"],
     "jsx": "react",
-    "module": "CommonJS",
+    "module": "commonjs",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "declaration": true,
@@ -13,7 +13,8 @@
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "emitDeclarationOnly": true
   },
   "include": ["typings.d.ts", "lib/**/*"]
 }

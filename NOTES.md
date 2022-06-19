@@ -82,15 +82,6 @@ fs calls use trash, do not follow links
 - [x] async perFileMatch
 - [x] async perFolderMatch
 
-### child_process
-
-- [x] execa
-<!-- - [ ] perhaps a helper for running node (perhaps with xnr) -->
-
-### fetch/http
-
-- [x] got
-
 ### url
 
 - [x] parseURL
@@ -180,6 +171,15 @@ fs calls use trash, do not follow links
 - [ ] serveFile
 - [ ] serveDirectory
 - [ ] serveStaticSite (scans files to understand how to serve)
+
+### child_process
+
+- [ ] subset of execa
+<!-- - [ ] perhaps a helper for running node (perhaps with xnr) -->
+
+### fetch/http
+
+- [x] subset of got
 
 ### zlib
 
