@@ -7,14 +7,14 @@ test("until continues at a date", async () => {
     await until(new Date(Date.now() + n));
     function_();
   };
-  const withDelayPromise = withDelay(10);
+  const withDelayPromise = withDelay(15);
   expect(function_).not.toBeCalled();
   await new Promise((resolve) => {
     return setTimeout(resolve, 5);
   });
   expect(function_).not.toBeCalled();
   await new Promise((resolve) => {
-    return setTimeout(resolve, 10);
+    return setTimeout(resolve, 15);
   });
   expect(function_).toBeCalled();
   expect(function_.mock.calls.length).toBe(1);
