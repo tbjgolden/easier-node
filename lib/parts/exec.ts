@@ -1,1 +1,1 @@
-export * from "execa";
+export * as run from "execa";

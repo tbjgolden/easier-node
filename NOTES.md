@@ -157,15 +157,11 @@ fs calls use trash, do not follow links
 - [x] hashFastHex
 - [x] hashSecureHex
 
-### worker_threads
-
-- [ ] parallelise?
-
 ### misc
 
-- [ ] \_\_filename polyfill
-- [ ] \_\_dirname polyfill
-- [ ] require.main polyfill
+- [x] \_\_filename polyfill
+- [x] \_\_dirname polyfill
+- [x] require.main polyfill
 
 # Stage 2.
 
@@ -205,6 +201,10 @@ fs calls use trash, do not follow links
 - [ ] some tolerant json parser / bindings
 - [ ] validator
 - [ ] lru-cache
+
+### worker_threads
+
+- [ ] parallelise?
 
 # Stage 3
 
@@ -959,7 +959,6 @@ fs calls use trash, do not follow links
 - [x] pm2
 - [x] polished
 - [x] @fortawesome/free-solid-svg-icons
-- [x] ts-jest
 - [x] react-test-renderer
 - [x] grunt-contrib-watch
 - [x] loglevel

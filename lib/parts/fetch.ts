@@ -1,1 +1,1 @@
-export * from "got";
+export * as fetch from "got";
