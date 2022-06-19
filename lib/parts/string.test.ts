@@ -6,6 +6,7 @@ import {
   toBase64String,
   toBase64URLString,
   toHexString,
+  toPrettyString,
   toUTF8String,
 } from "./string";
 import { REVERSE_TESTS } from "./__fixtures__/string";
@@ -37,4 +38,12 @@ test("fromBase64URLString", () => {
 });
 test("fromHexString", () => {
   expect(fromHexString("7468697320697320612074c3a9737421")).toEqual("this is a tést!");
+});
+
+test("toPrettyString", () => {
+  expect(
+    toPrettyString({
+      a: { b: { c: { d: 4 } } },
+    })
+  ).toEqual(`{\n  a: { b: { c: { d: 4 } } }\n}`);
 });

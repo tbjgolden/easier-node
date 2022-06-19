@@ -142,23 +142,24 @@ fs calls use trash, do not follow links
 
 ### util
 
-- [ ] pretty
+- [x] pretty
+- [x] print
 
 ### process
 
-- [ ] isLinux
-- [ ] isMac
-- [ ] isX64
-- [ ] isARM64
+- [x] isLinux
+- [x] isMac
+- [x] isX64
+- [x] isARM64
+
+### crypto
+
+- [x] hashFastHex
+- [x] hashSecureHex
 
 ### worker_threads
 
 - [ ] parallelise?
-
-### crypto
-
-- [ ] hashFastHex
-- [ ] hashSecureHex
 
 ### misc
 
@@ -167,6 +168,11 @@ fs calls use trash, do not follow links
 - [ ] require.main polyfill
 
 # Stage 2.
+
+### misc
+
+- [ ] install/check build-essential / equiv
+- [ ] install/check node dev essential / equiv
 
 ### tty
 
