@@ -2,8 +2,6 @@ export * from "./parts/commonjs";
 export * from "./parts/crypto";
 export * from "./parts/csv";
 export * from "./parts/dns";
-export * from "./parts/exec";
-export * from "./parts/fetch";
 export * from "./parts/filesystem";
 export * from "./parts/glob";
 export * from "./parts/json";
