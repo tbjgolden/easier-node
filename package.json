@@ -8,7 +8,6 @@
   "types": "dist/index.d.ts",
   "license": "Apache-2.0",
   "sideEffects": false,
-  "type": "module",
   "engines": {
     "node": "^16.13.0"
   },
@@ -37,6 +36,7 @@
   "devDependencies": {
     "@commitlint/cli": "^16.2.1",
     "@commitlint/config-conventional": "^16.2.1",
+    "@sucrase/jest-plugin": "^2.2.1",
     "@swc-node/jest": "^1.5.2",
     "@types/jest": "^28.0.0",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
@@ -51,6 +51,7 @@
     "lint-staged": "^12.3.5",
     "prettier": "^2.5.1",
     "semantic-release": "^19.0.2",
+    "sucrase": "^3.21.0",
     "typescript": "^4.6.4",
     "xnr": "0.2.1"
   },
@@ -63,7 +64,6 @@
     ]
   },
   "dependencies": {
-    "normalize-url": "7.0.3",
     "xxhash-wasm": "^1.0.1"
   }
 }

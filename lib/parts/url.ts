@@ -1,6 +1,6 @@
 import { URL } from "node:url";
-import { default as normalizeURL } from "normalize-url";
-export { default as normalizeURL } from "normalize-url";
+import { normalizeURL } from "./url.helpers";
+export { normalizeURL } from "./url.helpers";
 
 const DEFAULT_PORT_MAP = new Map<string, number>([
   ["http:", 80],

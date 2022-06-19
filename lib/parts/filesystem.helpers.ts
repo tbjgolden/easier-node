@@ -6,6 +6,7 @@ import { env, platform } from "node:process";
 import { execFile } from "node:child_process";
 import { uuidv4 } from "./uuid";
 import { getParentFolderPath, joinPaths } from "./path";
+import { getCJSGlobals } from "./commonjs";
 
 export const getFirstNBytes = async (path: string, n: number): Promise<Uint8Array> => {
   if (!Number.isFinite(n) || !Number.isInteger(n) || n < 0) {
@@ -107,6 +108,8 @@ export const getLastNBytes = async (path: string, n: number): Promise<Uint8Array
 };
 
 export const trashPath = async (path: string) => {
+  const { __dirname } = await getCJSGlobals(import.meta);
+
   await new Promise((resolve, reject) => {
     fs.lstat(path, (error) => {
       if (error !== null && error.code !== "ENOENT") {
@@ -118,14 +121,9 @@ export const trashPath = async (path: string) => {
 
   if (platform === "darwin") {
     await new Promise((resolve, reject) => {
-      execFile(
-        // eslint-disable-next-line unicorn/prefer-module
-        joinPaths(__dirname, "../assets/macos-trash"),
-        [path],
-        (error, stdout) => {
-          return error ? reject(error) : resolve(stdout);
-        }
-      );
+      execFile(joinPaths(__dirname, "../assets/macos-trash"), [path], (error, stdout) => {
+        return error ? reject(error) : resolve(stdout);
+      });
     });
   } else {
     const trashPath = joinPaths(

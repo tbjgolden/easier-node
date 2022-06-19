@@ -3,9 +3,9 @@ module.exports = {
   clearMocks: true,
   coverageReporters: ["json-summary", "text"],
   testEnvironment: "node",
-  testMatch: ["<rootDir>/lib/**/*.test.[tj]s?(x)"],
+  testMatch: ["<rootDir>/lib/**/*.test.ts"],
   transform: {
-    "^.+\\.(t|j)sx?$": ["@swc-node/jest"],
+    "^.+\\.(t|j)sx?$": "./.scripts/sucrase-jest.cjs",
   },
   transformIgnorePatterns: ["/node_modules/(?!(normalize-url)/)"],
 };
