@@ -3,7 +3,7 @@
     "target": "es2017",
     "lib": ["es2021"],
     "jsx": "react",
-    "module": "es2020",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "declaration": true,
@@ -12,7 +12,8 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "outDir": "dist"
   },
-  "include": ["typings.d.ts", "cli/**/*", "lib/**/*", ".scripts/**/*", "transpile.mjs"]
+  "include": ["typings.d.ts", "lib/**/*"]
 }

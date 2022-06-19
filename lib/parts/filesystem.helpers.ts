@@ -119,7 +119,8 @@ export const trashPath = async (path: string) => {
   if (platform === "darwin") {
     await new Promise((resolve, reject) => {
       execFile(
-        joinPaths(import.meta.url, "../assets/macos-trash"),
+        // eslint-disable-next-line unicorn/prefer-module
+        joinPaths(__dirname, "../assets/macos-trash"),
         [path],
         (error, stdout) => {
           return error ? reject(error) : resolve(stdout);
