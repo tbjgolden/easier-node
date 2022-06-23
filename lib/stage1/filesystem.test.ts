@@ -20,7 +20,7 @@ import fs from "node:fs/promises";
 import { getRelativePath } from "./path";
 
 test("appendFile", async () => {
-  const filePath = "lib/parts/__fixtures__/recruiters/testDir/.keep";
+  const filePath = "lib/stage1/__fixtures__/recruiters/testDir/.keep";
   await writeFile(filePath, "");
   await appendFile(filePath, "a string", true);
   expect(await readFile(filePath)).toBe("a string");
@@ -31,7 +31,7 @@ test("appendFile", async () => {
 });
 
 test("listFilesInFolder", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters";
+  const directoryPath = "lib/stage1/__fixtures__/recruiters";
   const expected = ["1line.csv", "all.csv", "fail.csv"];
   const filesRelativePath = await listFilesInFolder(directoryPath, "relative-path");
   expect(filesRelativePath).toEqual(expected);
@@ -50,7 +50,7 @@ test("listFilesInFolder", async () => {
 });
 
 test("listFoldersInFolder", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters";
+  const directoryPath = "lib/stage1/__fixtures__/recruiters";
   const expected = ["testDir"];
   const filesRelativePath = await listFoldersInFolder(directoryPath, "relative-path");
   expect(filesRelativePath).toEqual(expected);
@@ -69,7 +69,7 @@ test("listFoldersInFolder", async () => {
 });
 
 test("listFolderContents", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters";
+  const directoryPath = "lib/stage1/__fixtures__/recruiters";
   const expected = {
     files: ["1line.csv", "all.csv", "fail.csv"],
     folders: ["testDir"],
@@ -80,7 +80,7 @@ test("listFolderContents", async () => {
 });
 
 test("listFilesWithinFolder", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters";
+  const directoryPath = "lib/stage1/__fixtures__/recruiters";
   const expected = [
     "1line.csv",
     "all.csv",
@@ -105,7 +105,7 @@ test("listFilesWithinFolder", async () => {
 });
 
 test("listFoldersWithinFolder", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters";
+  const directoryPath = "lib/stage1/__fixtures__/recruiters";
   const expected = ["testDir", "testDir/nestedTestDir"];
   const filesRelativePath = await listFoldersWithinFolder(directoryPath, "relative-path");
   expect(filesRelativePath).toEqual(expected);
@@ -124,7 +124,7 @@ test("listFoldersWithinFolder", async () => {
 });
 
 test("isFile, isFolder, isSymlink", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters";
+  const directoryPath = "lib/stage1/__fixtures__/recruiters";
   await fs.symlink("..", directoryPath + "/symlink1");
   await fs.symlink("./all.csv", directoryPath + "/symlink2");
   expect(await isFile(directoryPath + "/all.csv")).toBe(true);
@@ -157,7 +157,7 @@ test("isFile, isFolder, isSymlink", async () => {
 });
 
 test("moveFile", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters/testDir";
+  const directoryPath = "lib/stage1/__fixtures__/recruiters/testDir";
   expect(await listFolderContents(directoryPath)).toEqual({
     files: [".keep"],
     folders: ["nestedTestDir"],
@@ -178,7 +178,7 @@ test("moveFile", async () => {
 });
 
 test("moveFolder", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters/testDir";
+  const directoryPath = "lib/stage1/__fixtures__/recruiters/testDir";
   expect(await listFolderContents(directoryPath)).toEqual({
     files: [".keep"],
     folders: ["nestedTestDir"],
@@ -199,7 +199,7 @@ test("moveFolder", async () => {
 });
 
 test("perFileMatch", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters/testDir";
+  const directoryPath = "lib/stage1/__fixtures__/recruiters/testDir";
   const cwd = process.cwd();
   const expected = [directoryPath + "/.keep", directoryPath + "/nestedTestDir/.keep"];
   expect(
@@ -237,7 +237,7 @@ test("perFileMatch", async () => {
 });
 
 test("perFolderMatch", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters/testDir";
+  const directoryPath = "lib/stage1/__fixtures__/recruiters/testDir";
   const cwd = process.cwd();
   const expected = [directoryPath + "/nestedTestDir"];
   expect(
@@ -258,7 +258,7 @@ test("perFolderMatch", async () => {
 
 test("perLine", async () => {
   const lines: string[] = [];
-  await perLine("lib/parts/__fixtures__/recruiters/all.csv", (line: string) => {
+  await perLine("lib/stage1/__fixtures__/recruiters/all.csv", (line: string) => {
     if (line.startsWith("2022/02/23,")) {
       lines.push(line);
     }
@@ -277,7 +277,7 @@ test("perLine", async () => {
 });
 
 afterAll(async () => {
-  await writeFile("lib/parts/__fixtures__/recruiters/testDir/.keep", "");
-  await fs.unlink("lib/parts/__fixtures__/recruiters/symlink1");
-  await fs.unlink("lib/parts/__fixtures__/recruiters/symlink2");
+  await writeFile("lib/stage1/__fixtures__/recruiters/testDir/.keep", "");
+  await fs.unlink("lib/stage1/__fixtures__/recruiters/symlink1");
+  await fs.unlink("lib/stage1/__fixtures__/recruiters/symlink2");
 });
