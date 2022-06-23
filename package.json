@@ -53,16 +53,11 @@
     "semantic-release": "^19.0.2",
     "sucrase": "^3.21.0",
     "typescript": "^4.6.4",
-    "xnr": "0.2.1"
+    "xnr": "^0.3.2"
   },
   "files": [
     "dist"
   ],
-  "release": {
-    "branches": [
-      "main"
-    ]
-  },
   "dependencies": {
     "xxhash-wasm": "^1.0.1"
   }

@@ -156,30 +156,17 @@ fs calls use trash, do not follow links
 
 # Stage 2.
 
-### misc
-
-- [ ] install/check build-essential / equiv
-- [ ] install/check node dev essential / equiv
-
 ### tty
 
-- [ ] isTerminal
-- [ ] isInteractive
+- [x] getTerminalWidth
+- [x] isInteractiveTerminal
+- [x] clearTerminalScreen
 
 ### http
 
 - [ ] serveFile
 - [ ] serveDirectory
 - [ ] serveStaticSite (scans files to understand how to serve)
-
-### child_process
-
-- [ ] subset of execa
-<!-- - [ ] perhaps a helper for running node (perhaps with xnr) -->
-
-### fetch/http
-
-- [x] subset of got
 
 ### zlib
 
@@ -201,6 +188,17 @@ fs calls use trash, do not follow links
 - [ ] some tolerant json parser / bindings
 - [ ] validator
 - [ ] lru-cache
+- [ ] install/check build-essential / equiv
+- [ ] install/check node dev essential / equiv
+
+### child_process
+
+- [ ] subset of execa
+<!-- - [ ] perhaps a helper for running node (perhaps with xnr) -->
+
+### fetch/http
+
+- [x] subset of got
 
 ### worker_threads
 
