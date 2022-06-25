@@ -1,7 +1,8 @@
 {
   "name": "easier-node",
   "description": "Node.js, but with a modern API",
-  "version": "0.0.1-alpha.6",
+  "version": "0.0.1-alpha.7",
+  "main": "./dist/index.mjs",
   "exports": {
     "import": "./dist/index.mjs"
   },
