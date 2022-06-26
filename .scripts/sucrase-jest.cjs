@@ -9,7 +9,7 @@ function process(source, filename) {
   const mapBase64 = Buffer.from(JSON.stringify(sourceMap)).toString("base64");
   const suffix = `//# sourceMappingURL=data:application/json;charset=utf-8;base64,${mapBase64}`;
   return {
-    code: `${code.replace(/import\s*\.meta/g, "{url:__filename}")}\n${suffix}`,
+    code: `${code.replace(/import\s*\.meta/g, "{url:'file://'+__filename}")}\n${suffix}`,
     map: sourceMap,
   };
 }

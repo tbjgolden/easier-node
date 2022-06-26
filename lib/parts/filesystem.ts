@@ -310,7 +310,7 @@ export const removeFile = async (path: string): Promise<void> => {
 /**
  * move a folder to Trash/Recycle bin
  */
-export const removeFolder = removeFile;
+export const removeAny = removeFile;
 
 /**
  * permanently deletes everything inside a folder
@@ -583,10 +583,10 @@ export const perFolderMatch = async <T>(
 /**
  *
  */
-export const perLine = async (
+export const perLine = async <T>(
   path: string,
-  processLineFunction: (line: string) => void | Promise<void>
-): Promise<void> => {
+  processLineFunction: (line: string) => T | Promise<T>
+): Promise<Exclude<T, undefined>[]> => {
   const fileStream = fs.createReadStream(path);
 
   const rl = readline.createInterface({
@@ -594,7 +594,12 @@ export const perLine = async (
     crlfDelay: Number.POSITIVE_INFINITY,
   });
 
+  const results: Exclude<T, undefined>[] = [];
   for await (const line of rl) {
-    await processLineFunction(line);
+    const result: T = await processLineFunction(line);
+    if (result !== undefined) {
+      results.push(result as Exclude<T, undefined>);
+    }
   }
+  return results;
 };

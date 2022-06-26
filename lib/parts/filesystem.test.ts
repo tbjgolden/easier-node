@@ -1,303 +1,166 @@
-import {
-  appendFile,
-  emptyFolder,
-  isEmptyFolder,
-  isFile,
-  isFolder,
-  isSymlink,
-  listFilesInFolder,
-  listFilesWithinFolder,
-  listFolderContents,
-  listFoldersInFolder,
-  listFoldersWithinFolder,
-  moveFile,
-  moveFolder,
-  perFileMatch,
-  perFolderMatch,
-  perLine,
-  readFile,
-  writeFile,
-} from "./filesystem";
+import { deleteFolder, ensureEmptyFolderExists } from "./filesystem";
+import * as f from "./filesystem";
 import fs from "node:fs/promises";
-import { getRelativePath } from "./path";
+import { resolvePaths } from "./path";
 
-test("appendFile", async () => {
-  const filePath = "lib/parts/__fixtures__/recruiters/testDir/.keep";
-  await writeFile(filePath, "");
-  await appendFile(filePath, "a string", true);
-  expect(await readFile(filePath)).toBe("a string");
-  await appendFile(filePath, "b string", false);
-  expect(await readFile(filePath)).toBe("a stringb string");
-  await appendFile(filePath, "c string", true);
-  expect(await readFile(filePath)).toBe("a stringb string\nc string");
+beforeAll(async () => {
+  await ensureEmptyFolderExists("lib/parts/__fixtures__/sandbox");
 });
-
-test("listFilesInFolder", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters";
-  const expected = ["1line.csv", "all.csv", "fail.csv"];
-  const filesRelativePath = await listFilesInFolder(directoryPath, "relative-path");
-  expect(filesRelativePath).toEqual(expected);
-  const filesRelativeCWD = await listFilesInFolder(directoryPath, "relative-cwd");
-  expect(filesRelativeCWD).toEqual(
-    expected.map((leaf) => {
-      return `${directoryPath}/${leaf}`;
-    })
-  );
-  const filesAbsolute = await listFilesInFolder(directoryPath, "absolute");
-  expect(filesAbsolute).toEqual(
-    expected.map((leaf) => {
-      return `${process.cwd()}/${directoryPath}/${leaf}`;
-    })
-  );
-});
-
-test("listFoldersInFolder", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters";
-  const expected = ["testDir"];
-  const filesRelativePath = await listFoldersInFolder(directoryPath, "relative-path");
-  expect(filesRelativePath).toEqual(expected);
-  const filesRelativeCWD = await listFoldersInFolder(directoryPath, "relative-cwd");
-  expect(filesRelativeCWD).toEqual(
-    expected.map((leaf) => {
-      return `${directoryPath}/${leaf}`;
-    })
-  );
-  const filesAbsolute = await listFoldersInFolder(directoryPath, "absolute");
-  expect(filesAbsolute).toEqual(
-    expected.map((leaf) => {
-      return `${process.cwd()}/${directoryPath}/${leaf}`;
-    })
-  );
-});
-
-test("listFolderContents", async () => {
-  expect(
-    await listFolderContents("lib/parts/__fixtures__/recruiters", "relative-path")
-  ).toEqual({
-    files: ["1line.csv", "all.csv", "fail.csv"],
-    folders: ["testDir"],
-    others: [],
-  });
-  expect(
-    await listFolderContents("lib/parts/__fixtures__/emptyTest", "relative-path")
-  ).toEqual({
-    files: ["a.txt"],
-    folders: ["b"],
-    others: [],
-  });
-});
-
-test("listFilesWithinFolder", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters";
-  const expected = [
-    "1line.csv",
-    "all.csv",
-    "fail.csv",
-    "testDir/.keep",
-    "testDir/nestedTestDir/.keep",
-  ];
-  const filesRelativePath = await listFilesWithinFolder(directoryPath, "relative-path");
-  expect(filesRelativePath).toEqual(expected);
-  const filesRelativeCWD = await listFilesWithinFolder(directoryPath, "relative-cwd");
-  expect(filesRelativeCWD).toEqual(
-    expected.map((leaf) => {
-      return `${directoryPath}/${leaf}`;
-    })
-  );
-  const filesAbsolute = await listFilesWithinFolder(directoryPath, "absolute");
-  expect(filesAbsolute).toEqual(
-    expected.map((leaf) => {
-      return `${process.cwd()}/${directoryPath}/${leaf}`;
-    })
-  );
-});
-
-test("listFoldersWithinFolder", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters";
-  const expected = ["testDir", "testDir/nestedTestDir"];
-  const filesRelativePath = await listFoldersWithinFolder(directoryPath, "relative-path");
-  expect(filesRelativePath).toEqual(expected);
-  const filesRelativeCWD = await listFoldersWithinFolder(directoryPath, "relative-cwd");
-  expect(filesRelativeCWD).toEqual(
-    expected.map((leaf) => {
-      return `${directoryPath}/${leaf}`;
-    })
-  );
-  const filesAbsolute = await listFoldersWithinFolder(directoryPath, "absolute");
-  expect(filesAbsolute).toEqual(
-    expected.map((leaf) => {
-      return `${process.cwd()}/${directoryPath}/${leaf}`;
-    })
-  );
-});
-
-test("isFile, isFolder, isSymlink", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters";
-  await fs.symlink("..", directoryPath + "/symlink1");
-  await fs.symlink("./all.csv", directoryPath + "/symlink2");
-  expect(await isFile(directoryPath + "/all.csv")).toBe(true);
-  expect(await isFile(directoryPath + "/not-a-real-file.csv")).toBe(false);
-  expect(await isFile(directoryPath)).toBe(false);
-  expect(await isFile(directoryPath + "/not-a-real-folder")).toBe(false);
-  expect(await isFile(directoryPath + "/not-a-real-folder/not-a-real-file.csv")).toBe(
-    false
-  );
-  expect(await isFile(directoryPath + "/symlink1")).toBe(false);
-  expect(await isFile(directoryPath + "/symlink2")).toBe(false);
-  expect(await isFolder(directoryPath + "/all.csv")).toBe(false);
-  expect(await isFolder(directoryPath + "/not-a-real-file.csv")).toBe(false);
-  expect(await isFolder(directoryPath)).toBe(true);
-  expect(await isFolder(directoryPath + "/not-a-real-folder")).toBe(false);
-  expect(await isFolder(directoryPath + "/not-a-real-folder/not-a-real-file.csv")).toBe(
-    false
-  );
-  expect(await isFolder(directoryPath + "/symlink1")).toBe(false);
-  expect(await isFolder(directoryPath + "/symlink2")).toBe(false);
-  expect(await isSymlink(directoryPath + "/all.csv")).toBe(false);
-  expect(await isSymlink(directoryPath + "/not-a-real-file.csv")).toBe(false);
-  expect(await isSymlink(directoryPath)).toBe(false);
-  expect(await isSymlink(directoryPath + "/not-a-real-folder")).toBe(false);
-  expect(await isSymlink(directoryPath + "/not-a-real-folder/not-a-real-file.csv")).toBe(
-    false
-  );
-  expect(await isSymlink(directoryPath + "/symlink1")).toBe(true);
-  expect(await isSymlink(directoryPath + "/symlink2")).toBe(true);
-});
-
-test("moveFile", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters/testDir";
-  expect(await listFolderContents(directoryPath)).toEqual({
-    files: [".keep"],
-    folders: ["nestedTestDir"],
-    others: [],
-  });
-  await moveFile(directoryPath + "/.keep", directoryPath + "/.keep.1");
-  expect(await listFolderContents(directoryPath)).toEqual({
-    files: [".keep.1"],
-    folders: ["nestedTestDir"],
-    others: [],
-  });
-  await moveFile(directoryPath + "/.keep.1", directoryPath + "/.keep");
-  expect(await listFolderContents(directoryPath)).toEqual({
-    files: [".keep"],
-    folders: ["nestedTestDir"],
-    others: [],
-  });
-});
-
-test("moveFolder", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters/testDir";
-  expect(await listFolderContents(directoryPath)).toEqual({
-    files: [".keep"],
-    folders: ["nestedTestDir"],
-    others: [],
-  });
-  await moveFolder(directoryPath + "/nestedTestDir", directoryPath + "/nestedTestDir.1");
-  expect(await listFolderContents(directoryPath)).toEqual({
-    files: [".keep"],
-    folders: ["nestedTestDir.1"],
-    others: [],
-  });
-  await moveFolder(directoryPath + "/nestedTestDir.1", directoryPath + "/nestedTestDir");
-  expect(await listFolderContents(directoryPath)).toEqual({
-    files: [".keep"],
-    folders: ["nestedTestDir"],
-    others: [],
-  });
-});
-
-test("emptyFolder", async () => {
-  const directoryPath = "lib/parts/__fixtures__/emptyTest";
-  expect(await isEmptyFolder(directoryPath)).toEqual(false);
-  await emptyFolder(directoryPath);
-  expect(await isEmptyFolder(directoryPath)).toEqual(true);
-});
-
-test("perFileMatch", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters/testDir";
-  const cwd = process.cwd();
-  const expected = [directoryPath + "/.keep", directoryPath + "/nestedTestDir/.keep"];
-  expect(
-    await perFileMatch(directoryPath + "/**", (filePath: string) => {
-      return getRelativePath(cwd, filePath);
-    })
-  ).toEqual(expected);
-  expect(
-    await perFileMatch(
-      "**",
-      (filePath: string) => {
-        return getRelativePath(cwd, filePath);
-      },
-      cwd + "/" + directoryPath
-    )
-  ).toEqual(expected);
-  expect(
-    await perFileMatch(
-      "*",
-      (filePath: string) => {
-        return getRelativePath(cwd, filePath);
-      },
-      cwd + "/" + directoryPath
-    )
-  ).toEqual([expected[0]]);
-  expect(
-    await perFileMatch(
-      "*/*",
-      (filePath: string) => {
-        return getRelativePath(cwd, filePath);
-      },
-      cwd + "/" + directoryPath
-    )
-  ).toEqual([expected[1]]);
-});
-
-test("perFolderMatch", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters/testDir";
-  const cwd = process.cwd();
-  const expected = [directoryPath + "/nestedTestDir"];
-  expect(
-    await perFolderMatch(directoryPath + "/**", (filePath: string) => {
-      return getRelativePath(cwd, filePath);
-    })
-  ).toEqual(expected);
-  expect(
-    await perFolderMatch(
-      "**",
-      (filePath: string) => {
-        return getRelativePath(cwd, filePath);
-      },
-      cwd + "/" + directoryPath
-    )
-  ).toEqual(expected);
-});
-
-test("perLine", async () => {
-  const lines: string[] = [];
-  await perLine("lib/parts/__fixtures__/recruiters/all.csv", (line: string) => {
-    if (line.startsWith("2022/02/23,")) {
-      lines.push(line);
-    }
-  });
-
-  expect(lines).toEqual([
-    "2022/02/23,<Our client>,LinkedIn (DM),No,Yes,No,No,High,,",
-    "2022/02/23,<Open to opportunities>,LinkedIn (DM),No,Yes,No,No,High,,",
-    "2022/02/23,<Our client>,LinkedIn (DM),No,Yes,No,No,Low,,",
-    "2022/02/23,Ecologi,LinkedIn (DM),Yes,Yes,No,No,Moderate,,",
-    "2022/02/23,Signal AI,LinkedIn (Req),No,Yes,No,No,High,,",
-    "2022/02/23,<Open to opportunities>,LinkedIn (Req),No,Yes,No,No,Moderate,,",
-    "2022/02/23,<Our client>,Email,No,Yes,No,No,High,,",
-    "2022/02/23,<Open to opportunities>,Email,No,Yes,No,No,High,,",
-  ]);
-});
-
 afterAll(async () => {
-  await writeFile("lib/parts/__fixtures__/recruiters/testDir/.keep", "");
-  await fs.unlink("lib/parts/__fixtures__/recruiters/symlink1");
-  await fs.unlink("lib/parts/__fixtures__/recruiters/symlink2");
-  await fs.rm("lib/parts/__fixtures__/emptyTest", { recursive: true });
-  await fs.mkdir("lib/parts/__fixtures__/emptyTest");
-  await fs.writeFile("lib/parts/__fixtures__/emptyTest/a.txt", "remove me\n");
-  await fs.mkdir("lib/parts/__fixtures__/emptyTest/b");
-  await fs.writeFile("lib/parts/__fixtures__/emptyTest/b/c.txt", "remove me too\n");
+  await deleteFolder("lib/parts/__fixtures__/sandbox");
+});
+
+test(`everything else`, async () => {
+  const startTime = Date.now() - 100;
+
+  const sandbox = "lib/parts/__fixtures__/sandbox";
+  const fns = new Set(Object.keys(f));
+  fns.delete("ensureEmptyFolderExists");
+  //
+  await f.writeJSONFile(sandbox + "/a.json", {
+    hello: "world",
+  });
+  fns.delete("writeJSONFile");
+  expect(await f.readJSONFile(sandbox + "/a.json")).toEqual({ hello: "world" });
+  fns.delete("readJSONFile");
+  await f.writeFile(sandbox + "/b.txt", "hello\n");
+  fns.delete("writeFile");
+  await f.createFolder(sandbox + "/c");
+  fns.delete("createFolder");
+  await f.moveFile(sandbox + "/b.txt", sandbox + "/c/b.txt");
+  fns.delete("moveFile");
+  await f.appendFile(sandbox + "/c/b.txt", "world", true);
+  fns.delete("appendFile");
+  expect(await f.readFile(sandbox + "/c/b.txt")).toEqual("hello\nworld");
+  fns.delete("readFile");
+  expect(await f.getFileBytes(sandbox + "/c/b.txt")).toBe(11);
+  fns.delete("getFileBytes");
+  expect(
+    (await f.getFileCreatedDate(sandbox + "/c/b.txt")).getTime()
+  ).toBeGreaterThanOrEqual(startTime);
+  fns.delete("getFileCreatedDate");
+  expect(
+    (await f.getFileLastChangeDate(sandbox + "/c/b.txt")).getTime()
+  ).toBeGreaterThanOrEqual(
+    (await f.getFileCreatedDate(sandbox + "/c/b.txt")).getTime() - 5
+  );
+  fns.delete("getFileLastChangeDate");
+  expect(
+    await f.perLine(sandbox + "/c/b.txt", (line) => {
+      if (line.startsWith("h")) return line.toUpperCase();
+    })
+  ).toEqual(["HELLO"]);
+  fns.delete("perLine");
+  await f.renameFile(sandbox + "/c/b.txt", sandbox + "/c/c.txt");
+  fns.delete("renameFile");
+  expect(
+    await f.perFileMatch(sandbox + "/**/*.txt", (match) => {
+      return match.split("/" + sandbox + "/")[1];
+    })
+  ).toEqual(["c/c.txt"]);
+  fns.delete("perFileMatch");
+  expect(await f.listFilesInFolder(sandbox + "/c")).toEqual(["c.txt"]);
+  fns.delete("listFilesInFolder");
+  expect(await f.listFoldersInFolder(sandbox)).toEqual(["c"]);
+  fns.delete("listFoldersInFolder");
+  expect(await f.listFilesWithinFolder(sandbox)).toEqual(["a.json", "c/c.txt"]);
+  fns.delete("listFilesWithinFolder");
+  await f.ensureFolderExists(sandbox + "/c/d");
+  fns.delete("ensureFolderExists");
+  expect(await f.listFoldersWithinFolder(sandbox)).toEqual(["c", "c/d"]);
+  fns.delete("listFoldersWithinFolder");
+  await f.moveFolder(sandbox + "/c/d", sandbox + "/b");
+  fns.delete("moveFolder");
+  expect(await f.listFolderContents(sandbox)).toEqual({
+    files: ["a.json"],
+    folders: ["b", "c"],
+    others: [],
+  });
+  fns.delete("listFolderContents");
+  await f.renameFolder(sandbox + "/b", sandbox + "/d");
+  fns.delete("renameFolder");
+  expect(await f.isEmptyFolder(sandbox)).toBe(false);
+  expect(await f.isEmptyFolder(sandbox + "/d")).toBe(true);
+  fns.delete("isEmptyFolder");
+  expect(await f.isEmptyFolder(sandbox)).toBe(false);
+  expect(await f.isEmptyFolder(sandbox + "/d")).toBe(true);
+  await fs.symlink("./a.json", sandbox + "/b.json");
+  expect(await f.listFolderContents(sandbox)).toEqual({
+    files: ["a.json"],
+    folders: ["c", "d"],
+    others: ["b.json"],
+  });
+  expect(await f.isFile(sandbox + "/b.json")).toBe(false);
+  expect(await f.isFile(sandbox + "/a.json")).toBe(true);
+  fns.delete("isFile");
+  expect(await f.isFolder(sandbox + "/c")).toBe(true);
+  expect(await f.isFolder(sandbox + "/e")).toBe(false);
+  fns.delete("isFolder");
+  expect(await f.isEmptyFolder(sandbox + "/c")).toBe(false);
+  expect(await f.isEmptyFolder(sandbox + "/d")).toBe(true);
+  fns.delete("isEmptyFolder");
+  expect(await f.isSymlink(sandbox + "/a.json")).toBe(false);
+  expect(await f.isSymlink(sandbox + "/b.json")).toBe(true);
+  fns.delete("isSymlink");
+  expect(await f.doesPathExist(sandbox + "/b.json")).toBe(true);
+  fns.delete("doesPathExist");
+  await f.copyFolder(sandbox + "/c", sandbox + "/e");
+  fns.delete("copyFolder");
+  expect(await f.listFilesWithinFolder(sandbox + "/e")).toEqual(["c.txt"]);
+  await f.removeFile(sandbox + "/e/c.txt");
+  expect(await f.listFilesWithinFolder(sandbox + "/e")).toEqual([]);
+  fns.delete("removeFile");
+  await f.removeAny(sandbox + "/e");
+  expect(await f.listFoldersWithinFolder(sandbox)).toEqual(["c", "d"]);
+  fns.delete("removeAny");
+  await f.createFolder(sandbox + "/e");
+  await f.copyFolderContentsToFolder(sandbox + "/c", sandbox + "/e");
+  expect(await f.listFolderContents(sandbox + "/c")).toEqual(
+    await f.listFolderContents(sandbox + "/e")
+  );
+  expect(await f.listFolderContents(sandbox + "/e")).toEqual({
+    files: ["c.txt"],
+    folders: [],
+    others: [],
+  });
+  fns.delete("copyFolderContentsToFolder");
+  await f.emptyFolder(sandbox + "/e");
+  expect(await f.listFolderContents(sandbox + "/e")).toEqual({
+    files: [],
+    folders: [],
+    others: [],
+  });
+  fns.delete("emptyFolder");
+  await f.copyFile(sandbox + "/c/c.txt", sandbox + "/d/c.txt");
+  expect(await f.listFolderContents(sandbox + "/d")).toEqual({
+    files: ["c.txt"],
+    folders: [],
+    others: [],
+  });
+  fns.delete("copyFile");
+  await f.deleteFile(sandbox + "/d/c.txt");
+  expect(await f.listFolderContents(sandbox + "/d")).toEqual({
+    files: [],
+    folders: [],
+    others: [],
+  });
+  fns.delete("deleteFile");
+  await f.ensureFileExists(sandbox + "/c/c.txt");
+  expect(await f.readFile(sandbox + "/c/c.txt")).toBe("hello\nworld");
+  fns.delete("ensureFileExists");
+  await f.ensureEmptyFileExists(sandbox + "/f/c.txt");
+  expect(await f.readFile(sandbox + "/f/c.txt")).toBe("");
+  fns.delete("ensureEmptyFileExists");
+  await f.deleteAny(sandbox + "/d");
+  fns.delete("deleteAny");
+  expect(
+    await f.perFolderMatch(sandbox + "/*", (value) => {
+      return value.slice(resolvePaths(sandbox).length + 1);
+    })
+  ).toEqual(["c", "e", "f"]);
+  fns.delete("perFolderMatch");
+
+  //
+  fns.delete("deleteFolder");
+  expect([...fns]).toEqual([]);
 });

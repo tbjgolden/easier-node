@@ -7,5 +7,6 @@ module.exports = {
   transform: {
     "^.+\\.ts$": "./.scripts/sucrase-jest.cjs",
   },
+  moduleFileExtensions: ["ts", "js"],
   transformIgnorePatterns: ["/node_modules/(?!(normalize-url)/)"],
 };
