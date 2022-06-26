@@ -52,7 +52,7 @@ export const parseURL = (inputURL: string, baseURL?: string): ParsedURL => {
     port:
       rawURL.port === ""
         ? getDefaultPortForProtocol(rawURL.protocol) ?? ""
-        : Number.parseInt(rawURL.protocol),
+        : Number.parseInt(rawURL.port),
   };
 };
 
