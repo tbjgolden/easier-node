@@ -1,5 +1,7 @@
 import {
   appendFile,
+  emptyFolder,
+  isEmptyFolder,
   isFile,
   isFolder,
   isSymlink,
@@ -69,14 +71,20 @@ test("listFoldersInFolder", async () => {
 });
 
 test("listFolderContents", async () => {
-  const directoryPath = "lib/parts/__fixtures__/recruiters";
-  const expected = {
+  expect(
+    await listFolderContents("lib/parts/__fixtures__/recruiters", "relative-path")
+  ).toEqual({
     files: ["1line.csv", "all.csv", "fail.csv"],
     folders: ["testDir"],
     others: [],
-  };
-  const filesRelativePath = await listFolderContents(directoryPath, "relative-path");
-  expect(filesRelativePath).toEqual(expected);
+  });
+  expect(
+    await listFolderContents("lib/parts/__fixtures__/emptyTest", "relative-path")
+  ).toEqual({
+    files: ["a.txt"],
+    folders: ["b"],
+    others: [],
+  });
 });
 
 test("listFilesWithinFolder", async () => {
@@ -198,6 +206,13 @@ test("moveFolder", async () => {
   });
 });
 
+test("emptyFolder", async () => {
+  const directoryPath = "lib/parts/__fixtures__/emptyTest";
+  expect(await isEmptyFolder(directoryPath)).toEqual(false);
+  await emptyFolder(directoryPath);
+  expect(await isEmptyFolder(directoryPath)).toEqual(true);
+});
+
 test("perFileMatch", async () => {
   const directoryPath = "lib/parts/__fixtures__/recruiters/testDir";
   const cwd = process.cwd();
@@ -280,4 +295,9 @@ afterAll(async () => {
   await writeFile("lib/parts/__fixtures__/recruiters/testDir/.keep", "");
   await fs.unlink("lib/parts/__fixtures__/recruiters/symlink1");
   await fs.unlink("lib/parts/__fixtures__/recruiters/symlink2");
+  await fs.rm("lib/parts/__fixtures__/emptyTest", { recursive: true });
+  await fs.mkdir("lib/parts/__fixtures__/emptyTest");
+  await fs.writeFile("lib/parts/__fixtures__/emptyTest/a.txt", "remove me\n");
+  await fs.mkdir("lib/parts/__fixtures__/emptyTest/b");
+  await fs.writeFile("lib/parts/__fixtures__/emptyTest/b/c.txt", "remove me too\n");
 });

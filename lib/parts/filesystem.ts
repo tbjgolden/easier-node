@@ -3,7 +3,7 @@ import readline from "node:readline";
 import { getLastNBytes, move, trashPath } from "./filesystem.helpers";
 import { globToRegex } from "./glob";
 import { JSONData, readJSON, writeJSON } from "./json";
-import { getParentFolderPath, joinPaths, resolvePaths } from "./path";
+import { getParentFolderPath, getRelativePath, joinPaths, resolvePaths } from "./path";
 
 /**
  * same as fs.readFile, but assumes the file is a UTF8 string
@@ -159,8 +159,9 @@ export const listFolderContents = async (
 
   for (const dirent of await fs.promises.readdir(path, { withFileTypes: true })) {
     let subPath = dirent.name;
-    if (output === "relative-cwd") subPath = joinPaths(subPath, dirent.name);
-    else if (output === "absolute") subPath = resolvePaths(subPath, dirent.name);
+    if (output === "relative-cwd")
+      subPath = getRelativePath(process.cwd(), joinPaths(path, dirent.name));
+    else if (output === "absolute") subPath = resolvePaths(path, dirent.name);
 
     if (dirent.isFile()) files.push(subPath);
     else if (dirent.isDirectory()) folders.push(subPath);
@@ -319,7 +320,7 @@ export const emptyFolder = async (path: string): Promise<void> => {
     throw new Error("Path is not a folder");
   }
 
-  const { files, folders, others } = await listFolderContents(path, "absolute");
+  const { files, folders, others } = await listFolderContents(path, "relative-cwd");
   await Promise.all([
     ...files.map((file) => {
       return deleteFile(file);
@@ -367,6 +368,15 @@ export const isFile = async (path: string): Promise<boolean> => {
  */
 export const isFolder = async (path: string): Promise<boolean> => {
   return (await getType(path)) === "folder";
+};
+
+/**
+ * determines if the path refers to an empty folder or not
+ */
+export const isEmptyFolder = async (path: string): Promise<boolean> => {
+  return (
+    (await getType(path)) === "folder" && (await fs.promises.readdir(path)).length === 0
+  );
 };
 
 /**
