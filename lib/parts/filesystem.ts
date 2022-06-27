@@ -374,9 +374,7 @@ export const isFolder = async (path: string): Promise<boolean> => {
  * determines if the path refers to an empty folder or not
  */
 export const isEmptyFolder = async (path: string): Promise<boolean> => {
-  return (
-    (await getType(path)) === "folder" && (await fs.promises.readdir(path)).length === 0
-  );
+  return (await isFolder(path)) && (await fs.promises.readdir(path)).length === 0;
 };
 
 /**
