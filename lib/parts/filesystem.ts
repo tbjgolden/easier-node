@@ -345,8 +345,7 @@ export const deleteFile = async (path: string): Promise<void> => {
  * permanently deletes a folder, and anything inside it
  */
 export const deleteFolder = async (path: string): Promise<void> => {
-  await emptyFolder(path);
-  return fs.promises.rmdir(path);
+  return fs.promises.rm(path, { recursive: true });
 };
 
 /**
