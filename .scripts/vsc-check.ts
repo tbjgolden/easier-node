@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 import fs from "node:fs/promises";
 import path from "node:path";
+
 import { getPackageRoot } from "./deps/package";
 
 const commentRegex = /"files\.exclude":\s*{[^/}]*?\/\//g;

@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 import fs from "node:fs/promises";
 import path from "node:path";
+
 import { getPackageRoot } from "./deps/package";
 
 const bold = (string_: string): string => {
@@ -22,9 +23,7 @@ const main = async () => {
 
   try {
     const packageJSON: {
-      scripts: {
-        [key: string]: string;
-      };
+      scripts: Record<string, string>;
     } = JSON.parse(await fs.readFile(path.join(projectRoot, "package.json"), "utf8"));
     const map = new Map();
     for (const [k, v] of Object.entries(packageJSON.scripts)) {
