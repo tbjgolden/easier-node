@@ -28,7 +28,10 @@ export const getFirstCSVFileRow = async (
   for (let byteCount = 4096; byteCount <= 262_144; byteCount = byteCount + byteCount) {
     const firstBytes = await getFirstNBytes(path, byteCount);
     const firstString = Buffer.from(firstBytes).toString("utf8");
-    const firstEntry = getFirstNEntriesFromPartialCSV(firstString, 1, parseOptions);
+    const firstEntry = getFirstNEntriesFromPartialCSV(firstString, 1, {
+      ...parseOptions,
+      isPartial: firstBytes.length === byteCount,
+    });
     if (firstEntry !== "incomplete") {
       return firstEntry[0];
     }
@@ -46,7 +49,10 @@ export const getLastCSVFileRow = async (
   for (let byteCount = 4096; byteCount <= 262_144; byteCount = byteCount + byteCount) {
     const lastBytes = await getLastNBytes(path, byteCount);
     const lastString = Buffer.from(lastBytes).toString("utf8");
-    const lastEntry = getLastNEntriesFromPartialCSV(lastString, 1, parseOptions);
+    const lastEntry = getLastNEntriesFromPartialCSV(lastString, 1, {
+      ...parseOptions,
+      isPartial: lastBytes.length === byteCount,
+    });
     if (lastEntry !== "incomplete") {
       return lastEntry[0];
     }

@@ -65,6 +65,7 @@ export const parseCSV = (
   try {
     while ((matches = lexer.exec(csvString)) !== null) {
       match = matches[0];
+
       if (match.includes(",")) {
         match = match.trim();
       }
@@ -161,11 +162,10 @@ export const parseCSV = (
       }
     }
 
-    if (row.length > 0) {
-      if (state === 2) {
-        throw new Error(`Unterminated " at EOF (${rowNumber},${columnNumber})`);
-      }
-
+    if (state === 2) {
+      throw new Error(`Unterminated " at EOF (${rowNumber},${columnNumber})`);
+    }
+    if (value.length > 0) {
       addCell(state > 1);
       addRow();
     }
@@ -187,16 +187,18 @@ export const parseCSV = (
 };
 
 export const getFirstNEntriesFromPartialCSV = (
-  partialStartString: string,
+  startString: string,
   n: number,
-  parseOptions: Partial<Omit<ParseOptions, "returnOnFail">> = {}
+  parseOptions: Partial<
+    Omit<ParseOptions, "shouldReturnOnFail"> & { isPartial: boolean }
+  > = {}
 ): string[][] | "incomplete" => {
-  const parsed = parseCSV(partialStartString, {
+  const parsed = parseCSV(startString, {
     ...parseOptions,
-    returnOnFail: true,
+    shouldReturnOnFail: true,
   });
 
-  if (parsed.rows.length < n) {
+  if (parsed.rows.length < n || (parsed.rows.length === n && parseOptions.isPartial)) {
     return "incomplete";
   }
 
@@ -219,18 +221,26 @@ export const getFirstNEntriesFromPartialCSV = (
 const CRLF_REGEX = /\r\n?/g;
 
 export const getLastNEntriesFromPartialCSV = (
-  partialEndString: string,
+  endString: string,
   n: number,
-  parseOptions: Partial<Omit<ParseOptions, "returnOnFail">> = {}
+  parseOptions: Partial<
+    Omit<ParseOptions, "shouldReturnOnFail"> & { isPartial: boolean }
+  > = {}
 ): string[][] | "incomplete" => {
-  const withNoCRLF = partialEndString.replace(CRLF_REGEX, "\n");
-  const reversed = reverseString(withNoCRLF);
+  const withNoCRLF = endString.replace(CRLF_REGEX, "\n");
+  let lastNonNewlineIndex = withNoCRLF.length - 1;
+  for (; lastNonNewlineIndex >= 0; lastNonNewlineIndex--) {
+    if (withNoCRLF.codePointAt(lastNonNewlineIndex) !== 10) {
+      break;
+    }
+  }
+  const reversed = reverseString(withNoCRLF.slice(0, lastNonNewlineIndex + 1));
   const parsed = parseCSV(reversed, {
     ...parseOptions,
-    returnOnFail: true,
+    shouldReturnOnFail: true,
   });
 
-  if (parsed.rows.length < n) {
+  if (parsed.rows.length < n || (parsed.rows.length === n && parseOptions.isPartial)) {
     return "incomplete";
   }
 
