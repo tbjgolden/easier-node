@@ -5,13 +5,27 @@ import {
   TOLERANCE_TEST_CASES,
   WHITESPACE_TEST_CASES,
 } from "../__fixtures__/csv";
-import { readFile } from "../filesystem/filesystem";
-import { escapeCSVValue, getFirstCSVFileRow, getLastCSVFileRow, parseCSV } from "./csv";
+import { deleteFile, readFile, writeFile } from "../filesystem/filesystem";
+import {
+  appendEntryToCSVFile,
+  appendRowToCSVFile,
+  escapeCSVValue,
+  getFirstCSVFileRow,
+  getLastCSVFileRow,
+  parseCSV,
+} from "./csv";
 import {
   doesCSVValueRequireQuotes,
   getFirstNEntriesFromPartialCSV,
   getLastNEntriesFromPartialCSV,
 } from "./csv.helpers";
+
+beforeAll(async () => {
+  await writeFile("lib/__fixtures__/csv/appendtest.csv", "a,b,c\n1,2,3\n");
+});
+afterAll(async () => {
+  await deleteFile("lib/__fixtures__/csv/appendtest.csv");
+});
 
 test(`escapeCSVValue`, () => {
   expect(escapeCSVValue(``)).toBe(``);
@@ -98,8 +112,10 @@ test(`parseCSV: Error Tests`, () => {
 
 test(`getFirstNEntriesFromPartialCSV`, async () => {
   const csvString = await readFile("lib/__fixtures__/csv/all.csv");
+  const zerothLine = getFirstNEntriesFromPartialCSV(csvString, 0);
   const firstLine = getFirstNEntriesFromPartialCSV(csvString, 1);
   const firstFiveLines = getFirstNEntriesFromPartialCSV(csvString, 5);
+  expect(zerothLine).toEqual([]);
   expect(firstLine).toEqual([
     [
       "Date",
@@ -154,12 +170,16 @@ test(`getFirstNEntriesFromPartialCSV`, async () => {
     ],
     ["2021/11/16", "Plum Guide", "LinkedIn (DM)", "No", "Yes", "No", "No", "Low", "", ""],
   ]);
+  const emptyFileResult = getFirstNEntriesFromPartialCSV("", 0);
+  expect(emptyFileResult).toEqual("incomplete");
 });
 
 test(`getLastNEntriesFromPartialCSV`, async () => {
   const csvString = await readFile("lib/__fixtures__/csv/all.csv");
+  const zerothLastLine = getLastNEntriesFromPartialCSV(csvString, 0);
   const lastLine = getLastNEntriesFromPartialCSV(csvString, 1);
   const lastFiveLines = getLastNEntriesFromPartialCSV(csvString, 5);
+  expect(zerothLastLine).toEqual([]);
   expect(lastLine).toEqual([
     ["2022/01/13", "<Our client>", "Phone", "No", "No", "No", "No", "High", "", ""],
   ]);
@@ -181,6 +201,8 @@ test(`getLastNEntriesFromPartialCSV`, async () => {
     ["2021/11/16", "Switchboard", "Email", "No", "Yes", "No", "No", "High", "", ""],
     ["2021/11/18", "The Nerdery", "Email", "No", "Yes", "No", "No", "High", "", ""],
   ]);
+  const emptyFileResult = getLastNEntriesFromPartialCSV("", 0);
+  expect(emptyFileResult).toEqual("incomplete");
 });
 
 test(`getFirstCSVFileRow`, async () => {
@@ -246,4 +268,36 @@ test(`getLastCSVFileRow`, async () => {
     getLastCSVFileRow("lib/__fixtures__/csv/toolong.csv")
   ).rejects.toThrow();
   await getLastCSVFileRow("lib/__fixtures__/csv/nottoolong.csv");
+});
+
+test(`appendEntryToCSVFile`, async () => {
+  expect(parseCSV(await readFile("lib/__fixtures__/csv/appendtest.csv")).rows).toEqual([
+    [..."abc"],
+    [..."123"],
+  ]);
+  await appendEntryToCSVFile("lib/__fixtures__/csv/appendtest.csv", {
+    c: 6,
+    b: 5,
+    a: 4,
+  });
+  expect(parseCSV(await readFile("lib/__fixtures__/csv/appendtest.csv")).rows).toEqual([
+    [..."abc"],
+    [..."123"],
+    [..."456"],
+  ]);
+});
+
+test(`appendRowToCSVFile`, async () => {
+  await appendRowToCSVFile("lib/__fixtures__/csv/appendtest.csv", [7, 8, 9]);
+  expect(parseCSV(await readFile("lib/__fixtures__/csv/appendtest.csv")).rows).toEqual([
+    [..."abc"],
+    [..."123"],
+    [..."456"],
+    [..."789"],
+  ]);
+});
+
+test(`extra misc coverage checks`, () => {
+  expect(() => parseCSV('a," b" ,c', { shouldTrimWhiteSpace: false }).rows).toThrow();
+  expect(() => parseCSV('a," b"x,c', { shouldTrimWhiteSpace: false }).rows).toThrow();
 });
