@@ -4,7 +4,7 @@ import { hashFastHex, hashSecureHex } from "./crypto";
 
 test(`hashFastHex`, async () => {
   expect(await hashFastHex(fs.readFileSync(`lib/__internal__/macos-trash`))).toBe(
-    `29589172435e4672`
+    `a163fb41d4b06f43beb10c8f98ea7b50f974f876`
   );
 });
 

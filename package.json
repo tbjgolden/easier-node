@@ -65,8 +65,5 @@
     "branches": [
       "main"
     ]
-  },
-  "dependencies": {
-    "xxhash-wasm": "^1.0.1"
   }
 }
