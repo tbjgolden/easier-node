@@ -1,5 +1,7 @@
 import readline from "node:readline";
 
+import { toPretty } from "../stri/stri";
+
 export const readInput = async (promptMessage: string): Promise<string> => {
   const readlineInterface = readline.createInterface({
     input: process.stdin,
@@ -16,4 +18,9 @@ export const readInput = async (promptMessage: string): Promise<string> => {
       resolve(answer);
     });
   });
+};
+
+export const print = (...input: unknown[]): void => {
+  // eslint-disable-next-line no-console
+  console.log(input.map((argument) => toPretty(argument)).join(" "));
 };

@@ -1,4 +1,4 @@
-import { reverseString } from "../stri/stri";
+import { reverse } from "../stri/stri";
 
 const NO_ESCAPE_NEEDED_REGEX = /^[^\s",]([^\n\r",]*[^\s",])?$|^$/;
 
@@ -234,7 +234,7 @@ export const readLastNEntries = (
       break;
     }
   }
-  const reversed = reverseString(withNoCRLF.slice(0, lastNonNewlineIndex + 1));
+  const reversed = reverse(withNoCRLF.slice(0, lastNonNewlineIndex + 1));
   const parsed = parse(reversed, {
     ...parseOptions,
     shouldReturnOnFail: true,
@@ -252,7 +252,7 @@ export const readLastNEntries = (
     if (row.length > 0 && (row.length !== 1 || row[0] !== "")) {
       const reversedRow: string[] = [];
       for (let index = row.length - 1; index >= 0; index--) {
-        reversedRow.push(reverseString(row[index]));
+        reversedRow.push(reverse(row[index]));
       }
       nonEmptyRows.push(reversedRow);
       if (nonEmptyRows.length === n && parsed.error === undefined) {

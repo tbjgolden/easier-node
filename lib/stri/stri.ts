@@ -10,10 +10,10 @@ const regexSurrogatePair = /([\uD800-\uDBFF])([\uDC00-\uDFFF])/g;
 /**
  * reverseString - reverse a string (reversing combination chars correctly)
  */
-export const reverseString = (string: string): string => {
+export const reverse = (string: string): string => {
   string = string
     .replace(regexSymbolWithCombiningMarks, (_, $1, $2) => {
-      return reverseString($2) + $1;
+      return reverse($2) + $1;
     })
     .replace(regexSurrogatePair, "$2$1");
 
@@ -25,7 +25,7 @@ export const reverseString = (string: string): string => {
   return result.join("");
 };
 
-export const toUTF8String = (
+export const toUTF8 = (
   input: WithImplicitCoercion<Buffer | ArrayBuffer | SharedArrayBuffer>
 ): string => {
   const buffer = input instanceof Buffer ? input : Buffer.from(input);
@@ -51,48 +51,38 @@ const toBuffer = (
   return buffer;
 };
 
-export const toBase64String = (
+export const toBase64 = (
   input: WithImplicitCoercion<string | Buffer | ArrayBuffer | SharedArrayBuffer>
 ): string => {
   return toBuffer(input).toString("base64");
 };
-export const toBase64URLString = (
+export const toBase64URL = (
   input: WithImplicitCoercion<string | Buffer | ArrayBuffer | SharedArrayBuffer>
 ): string => {
   return toBuffer(input).toString("base64url");
 };
-export const toHexString = (
+export const toHex = (
   input: WithImplicitCoercion<string | Buffer | ArrayBuffer | SharedArrayBuffer>
 ): string => {
   return toBuffer(input).toString("hex");
 };
-export const fromBase64String = (string: string): string => {
+export const fromBase64 = (string: string): string => {
   return Buffer.from(string, "base64").toString();
 };
-export const fromBase64URLString = (string: string): string => {
+export const fromBase64URL = (string: string): string => {
   return Buffer.from(string, "base64url").toString();
 };
-export const fromHexString = (string: string): string => {
+export const fromHex = (string: string): string => {
   return Buffer.from(string, "hex").toString();
 };
 
-export const toPrettyString = (input: unknown, options?: InspectOptions): string => {
+export const toPretty = (input: unknown, options?: InspectOptions): string => {
   return inspect(input, {
     depth: 10,
     maxArrayLength: 125,
     sorted: true,
     ...options,
   });
-};
-export const print = (...input: unknown[]): void => {
-  // eslint-disable-next-line no-console
-  console.log(
-    input
-      .map((argument) => {
-        return toPrettyString(argument);
-      })
-      .join(" ")
-  );
 };
 
 export const isIP = (string: string): boolean => {
