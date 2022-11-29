@@ -1,7 +1,7 @@
 import { URL } from "node:url";
 
-import { normalizeURL } from "./url.helpers";
-export { normalizeURL } from "./url.helpers";
+import { normalize } from "./url.helpers";
+export { normalize } from "./url.helpers";
 
 const DEFAULT_PORT_MAP = new Map<string, number>([
   ["http:", 80],
@@ -36,7 +36,7 @@ export type ParsedURL = {
   port: number | "";
 };
 
-export const parseURL = (inputURL: string, baseURL?: string): ParsedURL => {
+export const parse = (inputURL: string, baseURL?: string): ParsedURL => {
   const rawURL = new URL(inputURL, baseURL);
   return {
     hash: rawURL.hash,
@@ -57,7 +57,7 @@ export const parseURL = (inputURL: string, baseURL?: string): ParsedURL => {
   };
 };
 
-export const resolveURLs = (urlA: string, urlB: string): string => {
-  const url = parseURL(urlB, urlA);
-  return normalizeURL(url.href);
+export const resolve = (fromUrl: string, toUrl: string): string => {
+  const url = parse(toUrl, fromUrl);
+  return normalize(url.href);
 };

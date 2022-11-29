@@ -1,5 +1,5 @@
 export * as cli from "./cli/cli";
-export * as cryp from "./crypto/crypto";
+export * as cryp from "./cryp/cryp";
 export * as csv from "./csv/csv";
 export * as dns from "./dns/dns";
 export * as envi from "./envi/envi";

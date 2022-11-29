@@ -1,13 +1,13 @@
 /* timers is split into multiple files to test in parallel */
-import { delay } from "./time";
+import { wait } from "./time";
 
-test("delay delays", async () => {
+test("wait waits", async () => {
   const function_ = jest.fn();
-  const withDelay = async (n: number) => {
-    await delay(n);
+  const withWait = async (n: number) => {
+    await wait(n);
     function_();
   };
-  const withDelayPromise = withDelay(10);
+  const withWaitPromise = withWait(10);
   expect(function_).not.toBeCalled();
   await new Promise((resolve) => {
     return setTimeout(resolve, 5);
@@ -18,5 +18,5 @@ test("delay delays", async () => {
   });
   expect(function_).toBeCalled();
   expect(function_.mock.calls.length).toBe(1);
-  await withDelayPromise;
+  await withWaitPromise;
 });

@@ -1,7 +1,7 @@
-import { resolveURLs } from "./url";
+import { resolve } from "./url";
 
-test(`resolveURLs`, () => {
-  expect(resolveURLs("https://google.com/", "https://yahoo.com:443/")).toBe(
+test(`resolve`, () => {
+  expect(resolve("https://google.com/", "https://yahoo.com:443/")).toBe(
     "https://yahoo.com"
   );
 });

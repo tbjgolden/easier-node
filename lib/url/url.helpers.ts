@@ -8,61 +8,6 @@ const testParameter = (
   });
 };
 
-const DATA_URL_REGEX = /^data:(?<type>[^,]*?),(?<data>[^#]*?)(?:#(?<hash>.*))?$/;
-
-const normalizeDataURL = (urlString: string, { stripHash }: Options) => {
-  const match = DATA_URL_REGEX.exec(urlString);
-
-  if (!match) {
-    throw new Error(`Invalid URL: ${urlString}`);
-  }
-
-  const { type, data, hash: hash_ } = match.groups ?? {};
-  const mediaType = type.split(";");
-  const hash = stripHash ? "" : hash_;
-
-  let isBase64 = false;
-  if (mediaType[mediaType.length - 1] === "base64") {
-    mediaType.pop();
-    isBase64 = true;
-  }
-
-  // Lowercase MIME type
-  const mimeType = (mediaType.shift() ?? "").toLowerCase();
-  const attributes = mediaType
-    .map((attribute) => {
-      const pair = attribute.split("=").map((string) => {
-        return string.trim();
-      });
-
-      // Lowercase `charset`
-      if (pair[0] === "charset") {
-        pair[1] = pair[1].toLowerCase();
-
-        if (pair[1] === "us-ascii") {
-          return "";
-        }
-      }
-
-      return `${pair[0]}${pair[1] ? `=${pair[1]}` : ""}`;
-    })
-    .filter(Boolean);
-
-  const normalizedMediaType = [...attributes];
-
-  if (isBase64) {
-    normalizedMediaType.push("base64");
-  }
-
-  if (normalizedMediaType.length > 0 || (mimeType && mimeType !== "text/plain")) {
-    normalizedMediaType.unshift(mimeType);
-  }
-
-  return `data:${normalizedMediaType.join(";")},${isBase64 ? data.trim() : data}${
-    hash ? `#${hash}` : ""
-  }`;
-};
-
 interface Options {
   /**
    * @default 'http:'
@@ -176,7 +121,7 @@ const DEFAULT_OPTIONS: Options = {
 
 const REMOVE_DIRECTORY_INDEX_REGEX = /^index\.[a-z]+$/;
 
-export const normalizeURL = (urlString: string, options_: Partial<Options> = {}) => {
+export const normalize = (urlString: string, options_: Partial<Options> = {}) => {
   const options: Options = {
     ...DEFAULT_OPTIONS,
     ...options_,
@@ -337,4 +282,59 @@ export const normalizeURL = (urlString: string, options_: Partial<Options> = {})
   }
 
   return urlString;
+};
+
+const DATA_URL_REGEX = /^data:(?<type>[^,]*?),(?<data>[^#]*?)(?:#(?<hash>.*))?$/;
+
+const normalizeDataURL = (urlString: string, { stripHash }: Options) => {
+  const match = DATA_URL_REGEX.exec(urlString);
+
+  if (!match) {
+    throw new Error(`Invalid URL: ${urlString}`);
+  }
+
+  const { type, data, hash: hash_ } = match.groups ?? {};
+  const mediaType = type.split(";");
+  const hash = stripHash ? "" : hash_;
+
+  let isBase64 = false;
+  if (mediaType[mediaType.length - 1] === "base64") {
+    mediaType.pop();
+    isBase64 = true;
+  }
+
+  // Lowercase MIME type
+  const mimeType = (mediaType.shift() ?? "").toLowerCase();
+  const attributes = mediaType
+    .map((attribute) => {
+      const pair = attribute.split("=").map((string) => {
+        return string.trim();
+      });
+
+      // Lowercase `charset`
+      if (pair[0] === "charset") {
+        pair[1] = pair[1].toLowerCase();
+
+        if (pair[1] === "us-ascii") {
+          return "";
+        }
+      }
+
+      return `${pair[0]}${pair[1] ? `=${pair[1]}` : ""}`;
+    })
+    .filter(Boolean);
+
+  const normalizedMediaType = [...attributes];
+
+  if (isBase64) {
+    normalizedMediaType.push("base64");
+  }
+
+  if (normalizedMediaType.length > 0 || (mimeType && mimeType !== "text/plain")) {
+    normalizedMediaType.unshift(mimeType);
+  }
+
+  return `data:${normalizedMediaType.join(";")},${isBase64 ? data.trim() : data}${
+    hash ? `#${hash}` : ""
+  }`;
 };

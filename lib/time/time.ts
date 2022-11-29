@@ -1,6 +1,6 @@
 import { runAtDate } from "./time.helpers";
 
-export const delay = async (milliseconds: number): Promise<void> => {
+export const wait = async (milliseconds: number): Promise<void> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve();

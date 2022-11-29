@@ -1,6 +1,6 @@
 import dns from "node:dns";
 
-import { parseURL } from "../url/url";
+import { parse } from "../url/url";
 
 type MatchingIPs =
   | [["IPv4", string]]
@@ -9,7 +9,7 @@ type MatchingIPs =
   | [["IPv6", string], ["IPv4", string]];
 
 export const lookup = async (url: string): Promise<MatchingIPs> => {
-  const { hostname } = parseURL(url);
+  const { hostname } = parse(url);
 
   let hasFoundIPv4 = false;
   let hasFoundIPv6 = false;
@@ -33,6 +33,6 @@ export const lookup = async (url: string): Promise<MatchingIPs> => {
 };
 
 export const resolve = (url: string): Promise<dns.AnyRecord[]> => {
-  const { hostname } = parseURL(url);
+  const { hostname } = parse(url);
   return dns.promises.resolveAny(hostname);
 };
