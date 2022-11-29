@@ -1,8 +1,8 @@
-import { readJSON, removeJSONComments, writeJSON } from "./json";
+import { parse, stringify, stripComments } from "./json";
 
-test("readJSON", () => {
+test("parse", () => {
   expect(
-    readJSON(`{
+    parse(`{
   // Rainbows
   "unicorn": "cake"
   /*
@@ -15,19 +15,19 @@ test("readJSON", () => {
   });
 });
 
-test("writeJSON", () => {
+test("stringify", () => {
   expect(
-    writeJSON({
+    stringify({
       // Rainbows
       unicorn: "cake",
     })
   ).toBe('{"unicorn":"cake"}');
 });
 
-test("removeJSONComments", () => {
+test("stripComments", () => {
   expect(
     JSON.parse(
-      removeJSONComments(`{
+      stripComments(`{
   // Rainbows
   "unicorn": "cake"
   /*

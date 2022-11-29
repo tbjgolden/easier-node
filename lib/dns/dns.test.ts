@@ -1,9 +1,9 @@
 import { AnyARecord } from "node:dns";
 
-import { dnsLookup, dnsResolve } from "./dns";
+import { lookup, resolve } from "./dns";
 
-test("dnsLookup", async () => {
-  const result = (await dnsLookup("http://localhost/")).sort(([a], [b]) => {
+test("lookup", async () => {
+  const result = (await lookup("http://localhost/")).sort(([a], [b]) => {
     return a > b ? 1 : -1;
   });
 
@@ -13,8 +13,8 @@ test("dnsLookup", async () => {
   ]);
 });
 
-test("dnsResolve", async () => {
-  const addresses = (await dnsResolve("http://localhost/"))
+test("resolve", async () => {
+  const addresses = (await resolve("http://localhost/"))
     .filter((record) => {
       return record.type === "A";
     })

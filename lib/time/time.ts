@@ -1,8 +1,5 @@
-import { runAtDate } from "./timers.helpers";
+import { runAtDate } from "./time.helpers";
 
-/**
- * Wait for a number of milliseconds
- */
 export const delay = async (milliseconds: number): Promise<void> => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -11,14 +8,7 @@ export const delay = async (milliseconds: number): Promise<void> => {
   });
 };
 
-/**
- * Wait until the time represented by a date
- * @param date either a date or a timestamp in milliseconds
- * @param errorIfAlreadyPast
- * true will throw an error, false will just finish, default (undefined)
- * is same as false but will console.warn
- */
-export const until = async (
+export const waitUntil = async (
   date: Date | number,
   errorIfAlreadyPast?: boolean | undefined
 ): Promise<void> => {
@@ -44,22 +34,6 @@ export const until = async (
   });
 };
 
-/**
- * create a wrapper function which will delay calls to a given function
- * and flatten all calls within that delay to a single call (the last one)
- *
- * commonly used in search autocomplete and other interactive + expensive operations
- *
- * @param functionToDebounce
- * @param waitMilliseconds
- * how long the delay is before it
- * @param isImmediate
- * default: false. if true, will not wait for waitMilliseconds when the last call
- * was over waitMilliseconds ago
- * @param maxWaitMilliseconds
- * if defined, this will ensure the function is called at least once every
- * maxWaitMilliseconds, as in throttle behaviour
- */
 export const createDebouncedFunction = <
   FunctionType extends (...arguments_: unknown[]) => unknown
 >(
@@ -102,20 +76,6 @@ export const createDebouncedFunction = <
   };
 };
 
-/**
- * create a wrapper function which will reduce the number calls to a given function
- * to a manageable amount. Unlike debounce, this will still call the function during
- * rapid bursts; sending updates after every duration of milliseconds
- *
- * commonly used when listening to events and updating something procedurally
- *
- * @param functionToDebounce
- * @param milliseconds
- * how long the delay is between calls
- * @param isImmediate
- * default: false. if true, will not wait for waitMilliseconds when the last call
- * was over waitMilliseconds ago
- */
 export const createThrottledFunction = <
   FunctionType extends (...arguments_: unknown[]) => unknown
 >(

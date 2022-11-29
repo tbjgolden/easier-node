@@ -1,8 +1,8 @@
-import { reverseString } from "../string/string";
+import { reverseString } from "../stri/stri";
 
 const NO_ESCAPE_NEEDED_REGEX = /^[^\s",]([^\n\r",]*[^\s",])?$|^$/;
 
-export const doesCSVValueRequireQuotes = (value: string): boolean => {
+export const doesCellNeedQuotes = (value: string): boolean => {
   return !NO_ESCAPE_NEEDED_REGEX.test(value);
 };
 
@@ -28,7 +28,7 @@ export type ParseOptions = {
  * @param options.shouldReturnOnFail
  * if true, returns any parsed cells so far instead of throwing
  */
-export const parseCSV = (
+export const parse = (
   csvString: string,
   options: Partial<ParseOptions> = {}
 ): { rows: string[][]; error?: Error } => {
@@ -186,14 +186,14 @@ export const parseCSV = (
   };
 };
 
-export const getFirstNEntriesFromPartialCSV = (
+export const readFirstNEntries = (
   startString: string,
   n: number,
   parseOptions: Partial<
     Omit<ParseOptions, "shouldReturnOnFail"> & { isPartial: boolean }
   > = {}
 ): string[][] | "incomplete" => {
-  const parsed = parseCSV(startString, {
+  const parsed = parse(startString, {
     ...parseOptions,
     shouldReturnOnFail: true,
   });
@@ -220,7 +220,7 @@ export const getFirstNEntriesFromPartialCSV = (
 
 const CRLF_REGEX = /\r\n?/g;
 
-export const getLastNEntriesFromPartialCSV = (
+export const readLastNEntries = (
   endString: string,
   n: number,
   parseOptions: Partial<
@@ -235,7 +235,7 @@ export const getLastNEntriesFromPartialCSV = (
     }
   }
   const reversed = reverseString(withNoCRLF.slice(0, lastNonNewlineIndex + 1));
-  const parsed = parseCSV(reversed, {
+  const parsed = parse(reversed, {
     ...parseOptions,
     shouldReturnOnFail: true,
   });

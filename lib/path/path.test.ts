@@ -1,51 +1,47 @@
-import {
-  ensurePathEndsWithSlash,
-  getExtension,
-  getNormalizedPath,
-  joinPaths,
-  resolvePaths,
-  splitPath,
-} from "./path";
+import { ensureSlash, extension, join, normalize, resolve, split } from "./path";
 
-test("joinPaths", () => {
-  expect(joinPaths("a", "/b/c")).toBe("a/b/c");
-  expect(joinPaths("a", "b/c")).toBe("a/b/c");
-  expect(joinPaths("a", "b/c/")).toBe("a/b/c");
+test("join", () => {
+  expect(join("a", "/b/c")).toBe("a/b/c");
+  expect(join("a", "b/c")).toBe("a/b/c");
+  expect(join("a", "b/c/")).toBe("a/b/c");
 });
 
-test("resolvePaths", () => {
-  expect(resolvePaths("/a", "/b/c")).toBe("/b/c");
-  expect(resolvePaths("a", "b/c")).toBe(process.cwd() + "/a/b/c");
-  expect(resolvePaths("a", "b/c/")).toBe(process.cwd() + "/a/b/c");
+test("resolve", () => {
+  expect(resolve("/a", "/b/c")).toBe("/b/c");
+  expect(resolve("a", "b/c")).toBe(process.cwd() + "/a/b/c");
+  expect(resolve("a", "b/c/")).toBe(process.cwd() + "/a/b/c");
 });
 
-test("getNormalizedPath", () => {
-  expect(getNormalizedPath("/a/../b")).toBe("/b");
-  expect(getNormalizedPath("/a/./b")).toBe("/a/b");
-  expect(getNormalizedPath("/a/./b/")).toBe("/a/b");
-  expect(getNormalizedPath("a/..")).toBe(".");
-  expect(getNormalizedPath("a/../")).toBe(".");
+test("normalize", () => {
+  expect(normalize("/a/../b")).toBe("/b");
+  expect(normalize("/a/./b")).toBe("/a/b");
+  expect(normalize("/a/./b/")).toBe("/a/b");
+  expect(normalize("a/..")).toBe(".");
+  expect(normalize("a/../")).toBe(".");
 });
 
-test("splitPath", () => {
-  expect(splitPath("/hello/world")).toEqual(["hello", "world"]);
-  expect(splitPath("/")).toEqual([]);
-  expect(splitPath(".")).toEqual([]);
-  expect(splitPath("/hello")).toEqual(["hello"]);
-  expect(splitPath("world/")).toEqual(["world"]);
+test("split", () => {
+  expect(split("/hello/world")).toEqual(["hello", "world"]);
+  expect(split("/")).toEqual([]);
+  expect(split(".")).toEqual([]);
+  expect(split("/hello")).toEqual(["hello"]);
+  expect(split("world/")).toEqual(["world"]);
 });
 
-test("getExtension", () => {
-  expect(getExtension("/hello/world")).toBe("");
-  expect(getExtension("/hello/world.png")).toBe(".png");
-  expect(getExtension("/a.dir.with.dots/world")).toBe("");
-  expect(getExtension("/a.dir.with.dots")).toBe(".dots");
-  expect(getExtension("/a.dir.with.dots/")).toBe(".dots");
+test("readExtension", () => {
+  expect(extension("/hello/world")).toBe("");
+  expect(extension("/hello/world.png")).toBe(".png");
+  expect(extension("/hello/world.png", 2)).toBe(".png");
+  expect(extension("/a.dir.with.dots/world")).toBe("");
+  expect(extension("/a.dir.with.dots")).toBe(".dots");
+  expect(extension("/a.dir.with.dots", 2)).toBe(".with.dots");
+  expect(extension("/a.dir.with.dots", 3)).toBe(".dir.with.dots");
+  expect(extension("/a.dir.with.dots/")).toBe(".dots");
 });
 
 test("ensurePathEndsWithSlash", () => {
-  expect(ensurePathEndsWithSlash("/hello/world")).toBe("/hello/world/");
-  expect(ensurePathEndsWithSlash("/hello/world/")).toBe("/hello/world/");
-  expect(ensurePathEndsWithSlash("/hello")).toBe("/hello/");
-  expect(ensurePathEndsWithSlash("/")).toBe("/");
+  expect(ensureSlash("/hello/world")).toBe("/hello/world/");
+  expect(ensureSlash("/hello/world/")).toBe("/hello/world/");
+  expect(ensureSlash("/hello")).toBe("/hello/");
+  expect(ensureSlash("/")).toBe("/");
 });

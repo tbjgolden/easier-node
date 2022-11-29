@@ -5,20 +5,16 @@ import {
   TOLERANCE_TEST_CASES,
   WHITESPACE_TEST_CASES,
 } from "../__fixtures__/csv";
-import { deleteFile, readFile, writeFile } from "../filesystem/filesystem";
+import { deleteFile, readFile, writeFile } from "../file/file";
 import {
-  appendEntryToCSVFile,
-  appendRowToCSVFile,
-  escapeCSVValue,
-  getFirstCSVFileRow,
-  getLastCSVFileRow,
-  parseCSV,
+  appendEntryToFile,
+  appendRowToFile,
+  escape,
+  getFirstRowFromFile,
+  getLastRowFromFile,
+  parse,
 } from "./csv";
-import {
-  doesCSVValueRequireQuotes,
-  getFirstNEntriesFromPartialCSV,
-  getLastNEntriesFromPartialCSV,
-} from "./csv.helpers";
+import { doesCellNeedQuotes, readFirstNEntries, readLastNEntries } from "./csv.helpers";
 
 beforeAll(async () => {
   await writeFile("lib/__fixtures__/csv/appendtest.csv", "a,b,c\n1,2,3\n");
@@ -27,94 +23,92 @@ afterAll(async () => {
   await deleteFile("lib/__fixtures__/csv/appendtest.csv");
 });
 
-test(`escapeCSVValue`, () => {
-  expect(escapeCSVValue(``)).toBe(``);
-  expect(escapeCSVValue(` `)).toBe(`" "`);
-  expect(escapeCSVValue(`\tyay`)).toBe(`"\tyay"`);
-  expect(escapeCSVValue(`\n`)).toBe(`"\n"`);
-  expect(escapeCSVValue(`\\n`)).toBe(`\\n`);
-  expect(escapeCSVValue(`ya,yo`)).toBe(`"ya,yo"`);
-  expect(escapeCSVValue(`boom`)).toBe(`boom`);
-  expect(escapeCSVValue(` boom`)).toBe(`" boom"`);
-  expect(escapeCSVValue(`boom `)).toBe(`"boom "`);
-  expect(escapeCSVValue(` boom `)).toBe(`" boom "`);
-  expect(escapeCSVValue(`"boom"`)).toBe(`"""boom"""`);
-  expect(escapeCSVValue(`"boom`)).toBe(`"""boom"`);
+test(`escape`, () => {
+  expect(escape(``)).toBe(``);
+  expect(escape(` `)).toBe(`" "`);
+  expect(escape(`\tyay`)).toBe(`"\tyay"`);
+  expect(escape(`\n`)).toBe(`"\n"`);
+  expect(escape(`\\n`)).toBe(`\\n`);
+  expect(escape(`ya,yo`)).toBe(`"ya,yo"`);
+  expect(escape(`boom`)).toBe(`boom`);
+  expect(escape(` boom`)).toBe(`" boom"`);
+  expect(escape(`boom `)).toBe(`"boom "`);
+  expect(escape(` boom `)).toBe(`" boom "`);
+  expect(escape(`"boom"`)).toBe(`"""boom"""`);
+  expect(escape(`"boom`)).toBe(`"""boom"`);
   expect(
-    escapeCSVValue(
-      `qwertyuiopasdfghjklzxcvbnmm1234567890-=_+[]{}\\|;:'<>./?\`~!@#$%^&*()`
-    )
+    escape(`qwertyuiopasdfghjklzxcvbnmm1234567890-=_+[]{}\\|;:'<>./?\`~!@#$%^&*()`)
   ).toBe(`qwertyuiopasdfghjklzxcvbnmm1234567890-=_+[]{}\\|;:'<>./?\`~!@#$%^&*()`);
 });
 
-test(`doesCSVValueRequireQuotes`, () => {
-  expect(doesCSVValueRequireQuotes(``)).toBe(false);
-  expect(doesCSVValueRequireQuotes(` `)).toBe(true);
-  expect(doesCSVValueRequireQuotes(`\tyay`)).toBe(true);
-  expect(doesCSVValueRequireQuotes(`\n`)).toBe(true);
-  expect(doesCSVValueRequireQuotes(`\\n`)).toBe(false);
-  expect(doesCSVValueRequireQuotes(`ya,yo`)).toBe(true);
-  expect(doesCSVValueRequireQuotes(`boom`)).toBe(false);
-  expect(doesCSVValueRequireQuotes(` boom`)).toBe(true);
-  expect(doesCSVValueRequireQuotes(`boom `)).toBe(true);
-  expect(doesCSVValueRequireQuotes(` boom `)).toBe(true);
-  expect(doesCSVValueRequireQuotes(`"boom"`)).toBe(true);
-  expect(doesCSVValueRequireQuotes(`"boom`)).toBe(true);
+test(`doesCellNeedQuotes`, () => {
+  expect(doesCellNeedQuotes(``)).toBe(false);
+  expect(doesCellNeedQuotes(` `)).toBe(true);
+  expect(doesCellNeedQuotes(`\tyay`)).toBe(true);
+  expect(doesCellNeedQuotes(`\n`)).toBe(true);
+  expect(doesCellNeedQuotes(`\\n`)).toBe(false);
+  expect(doesCellNeedQuotes(`ya,yo`)).toBe(true);
+  expect(doesCellNeedQuotes(`boom`)).toBe(false);
+  expect(doesCellNeedQuotes(` boom`)).toBe(true);
+  expect(doesCellNeedQuotes(`boom `)).toBe(true);
+  expect(doesCellNeedQuotes(` boom `)).toBe(true);
+  expect(doesCellNeedQuotes(`"boom"`)).toBe(true);
+  expect(doesCellNeedQuotes(`"boom`)).toBe(true);
   expect(
-    doesCSVValueRequireQuotes(
+    doesCellNeedQuotes(
       `qwertyuiopasdfghjklzxcvbnmm1234567890-=_+[]{}\\|;:'<>./?\`~!@#$%^&*()`
     )
   ).toBe(false);
 });
 
 for (const testCase of RFC_TEST_CASES) {
-  test(`parseCSV: RFC Rule [\\n] #${testCase.rfc}:\n${testCase.description.join(
+  test(`parse: RFC Rule [\\n] #${testCase.rfc}:\n${testCase.description.join(
     "\n"
   )}`, () => {
-    expect(parseCSV(testCase.csv.join("\n")).rows).toEqual(testCase.json);
+    expect(parse(testCase.csv.join("\n")).rows).toEqual(testCase.json);
   });
-  test(`parseCSV: RFC Rule [\\r\\n] #${testCase.rfc}:\n${testCase.description.join(
+  test(`parse: RFC Rule [\\r\\n] #${testCase.rfc}:\n${testCase.description.join(
     "\n"
   )}`, () => {
-    expect(parseCSV(testCase.csv.join("\r\n")).rows).toEqual(testCase.json);
+    expect(parse(testCase.csv.join("\r\n")).rows).toEqual(testCase.json);
   });
 }
 
-test(`parseCSV: Whitespace Tests`, () => {
+test(`parse: Whitespace Tests`, () => {
   for (const testCase of WHITESPACE_TEST_CASES) {
-    expect(parseCSV(testCase.csv.join("\n")).rows).toEqual(testCase.json);
+    expect(parse(testCase.csv.join("\n")).rows).toEqual(testCase.json);
   }
 });
 
-test(`parseCSV: Whitespace Tests (no trim)`, () => {
+test(`parse: Whitespace Tests (no trim)`, () => {
   for (const testCase of NO_TRIM_WHITESPACE_TEST_CASES) {
-    expect(
-      parseCSV(testCase.csv.join("\n"), { shouldTrimWhiteSpace: false }).rows
-    ).toEqual(testCase.json);
+    expect(parse(testCase.csv.join("\n"), { shouldTrimWhiteSpace: false }).rows).toEqual(
+      testCase.json
+    );
   }
 });
 
-test(`parseCSV: Tolerance Tests`, () => {
+test(`parse: Tolerance Tests`, () => {
   for (const testCase of TOLERANCE_TEST_CASES) {
     expect(() => {
-      return parseCSV(testCase.csv.join("\n")).rows;
+      return parse(testCase.csv.join("\n")).rows;
     }).not.toThrow();
   }
 });
 
-test(`parseCSV: Error Tests`, () => {
+test(`parse: Error Tests`, () => {
   for (const testCase of ERROR_TEST_CASES) {
     expect(() => {
-      return parseCSV(testCase.csv.join("\n")).rows;
+      return parse(testCase.csv.join("\n")).rows;
     }).toThrow();
   }
 });
 
-test(`getFirstNEntriesFromPartialCSV`, async () => {
+test(`readFirstNEntries`, async () => {
   const csvString = await readFile("lib/__fixtures__/csv/all.csv");
-  const zerothLine = getFirstNEntriesFromPartialCSV(csvString, 0);
-  const firstLine = getFirstNEntriesFromPartialCSV(csvString, 1);
-  const firstFiveLines = getFirstNEntriesFromPartialCSV(csvString, 5);
+  const zerothLine = readFirstNEntries(csvString, 0);
+  const firstLine = readFirstNEntries(csvString, 1);
+  const firstFiveLines = readFirstNEntries(csvString, 5);
   expect(zerothLine).toEqual([]);
   expect(firstLine).toEqual([
     [
@@ -170,15 +164,15 @@ test(`getFirstNEntriesFromPartialCSV`, async () => {
     ],
     ["2021/11/16", "Plum Guide", "LinkedIn (DM)", "No", "Yes", "No", "No", "Low", "", ""],
   ]);
-  const emptyFileResult = getFirstNEntriesFromPartialCSV("", 0);
+  const emptyFileResult = readFirstNEntries("", 0);
   expect(emptyFileResult).toEqual("incomplete");
 });
 
 test(`getLastNEntriesFromPartialCSV`, async () => {
   const csvString = await readFile("lib/__fixtures__/csv/all.csv");
-  const zerothLastLine = getLastNEntriesFromPartialCSV(csvString, 0);
-  const lastLine = getLastNEntriesFromPartialCSV(csvString, 1);
-  const lastFiveLines = getLastNEntriesFromPartialCSV(csvString, 5);
+  const zerothLastLine = readLastNEntries(csvString, 0);
+  const lastLine = readLastNEntries(csvString, 1);
+  const lastFiveLines = readLastNEntries(csvString, 5);
   expect(zerothLastLine).toEqual([]);
   expect(lastLine).toEqual([
     ["2022/01/13", "<Our client>", "Phone", "No", "No", "No", "No", "High", "", ""],
@@ -201,12 +195,12 @@ test(`getLastNEntriesFromPartialCSV`, async () => {
     ["2021/11/16", "Switchboard", "Email", "No", "Yes", "No", "No", "High", "", ""],
     ["2021/11/18", "The Nerdery", "Email", "No", "Yes", "No", "No", "High", "", ""],
   ]);
-  const emptyFileResult = getLastNEntriesFromPartialCSV("", 0);
+  const emptyFileResult = readLastNEntries("", 0);
   expect(emptyFileResult).toEqual("incomplete");
 });
 
-test(`getFirstCSVFileRow`, async () => {
-  const a = await getFirstCSVFileRow("lib/__fixtures__/csv/all.csv");
+test(`getFirstRowFromFile`, async () => {
+  const a = await getFirstRowFromFile("lib/__fixtures__/csv/all.csv");
   expect(a).toEqual([
     "Date",
     "Company",
@@ -219,21 +213,21 @@ test(`getFirstCSVFileRow`, async () => {
     "dafuq",
     "!",
   ]);
-  const b = await getFirstCSVFileRow("lib/__fixtures__/csv/1line.csv");
+  const b = await getFirstRowFromFile("lib/__fixtures__/csv/1line.csv");
   expect(b).toEqual(a);
-  await getFirstCSVFileRow("lib/__fixtures__/csv/1cell.csv");
+  await getFirstRowFromFile("lib/__fixtures__/csv/1cell.csv");
 
   await expect(() =>
-    getFirstCSVFileRow("lib/__fixtures__/csv/fail.csv")
+    getFirstRowFromFile("lib/__fixtures__/csv/fail.csv")
   ).rejects.toThrow();
   await expect(() =>
-    getFirstCSVFileRow("lib/__fixtures__/csv/toolong.csv")
+    getFirstRowFromFile("lib/__fixtures__/csv/toolong.csv")
   ).rejects.toThrow();
-  await getFirstCSVFileRow("lib/__fixtures__/csv/nottoolong.csv");
+  await getFirstRowFromFile("lib/__fixtures__/csv/nottoolong.csv");
 });
 
-test(`getLastCSVFileRow`, async () => {
-  const a = await getLastCSVFileRow("lib/__fixtures__/csv/all.csv");
+test(`getLastRowFromFile`, async () => {
+  const a = await getLastRowFromFile("lib/__fixtures__/csv/all.csv");
   expect(a).toEqual([
     "2022/01/13",
     "<Our client>",
@@ -246,7 +240,7 @@ test(`getLastCSVFileRow`, async () => {
     "",
     "",
   ]);
-  const b = await getLastCSVFileRow("lib/__fixtures__/csv/1line.csv");
+  const b = await getLastRowFromFile("lib/__fixtures__/csv/1line.csv");
   expect(b).toEqual([
     "Date",
     "Company",
@@ -259,37 +253,37 @@ test(`getLastCSVFileRow`, async () => {
     "dafuq",
     "!",
   ]);
-  await getLastCSVFileRow("lib/__fixtures__/csv/1cell.csv");
+  await getLastRowFromFile("lib/__fixtures__/csv/1cell.csv");
 
   await expect(() =>
-    getLastCSVFileRow("lib/__fixtures__/csv/fail.csv")
+    getLastRowFromFile("lib/__fixtures__/csv/fail.csv")
   ).rejects.toThrow();
   await expect(() =>
-    getLastCSVFileRow("lib/__fixtures__/csv/toolong.csv")
+    getLastRowFromFile("lib/__fixtures__/csv/toolong.csv")
   ).rejects.toThrow();
-  await getLastCSVFileRow("lib/__fixtures__/csv/nottoolong.csv");
+  await getLastRowFromFile("lib/__fixtures__/csv/nottoolong.csv");
 });
 
-test(`appendEntryToCSVFile`, async () => {
-  expect(parseCSV(await readFile("lib/__fixtures__/csv/appendtest.csv")).rows).toEqual([
+test(`appendEntryToFile`, async () => {
+  expect(parse(await readFile("lib/__fixtures__/csv/appendtest.csv")).rows).toEqual([
     [..."abc"],
     [..."123"],
   ]);
-  await appendEntryToCSVFile("lib/__fixtures__/csv/appendtest.csv", {
+  await appendEntryToFile("lib/__fixtures__/csv/appendtest.csv", {
     c: 6,
     b: 5,
     a: 4,
   });
-  expect(parseCSV(await readFile("lib/__fixtures__/csv/appendtest.csv")).rows).toEqual([
+  expect(parse(await readFile("lib/__fixtures__/csv/appendtest.csv")).rows).toEqual([
     [..."abc"],
     [..."123"],
     [..."456"],
   ]);
 });
 
-test(`appendRowToCSVFile`, async () => {
-  await appendRowToCSVFile("lib/__fixtures__/csv/appendtest.csv", [7, 8, 9]);
-  expect(parseCSV(await readFile("lib/__fixtures__/csv/appendtest.csv")).rows).toEqual([
+test(`appendRowToFile`, async () => {
+  await appendRowToFile("lib/__fixtures__/csv/appendtest.csv", [7, 8, 9]);
+  expect(parse(await readFile("lib/__fixtures__/csv/appendtest.csv")).rows).toEqual([
     [..."abc"],
     [..."123"],
     [..."456"],
@@ -298,6 +292,6 @@ test(`appendRowToCSVFile`, async () => {
 });
 
 test(`extra misc coverage checks`, () => {
-  expect(() => parseCSV('a," b" ,c', { shouldTrimWhiteSpace: false }).rows).toThrow();
-  expect(() => parseCSV('a," b"x,c', { shouldTrimWhiteSpace: false }).rows).toThrow();
+  expect(() => parse('a," b" ,c', { shouldTrimWhiteSpace: false }).rows).toThrow();
+  expect(() => parse('a," b"x,c', { shouldTrimWhiteSpace: false }).rows).toThrow();
 });

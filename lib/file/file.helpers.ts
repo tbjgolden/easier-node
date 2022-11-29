@@ -5,9 +5,9 @@ import nodePath from "node:path";
 import { env, platform } from "node:process";
 
 import { getCJSGlobals } from "../__internal__/commonjs";
-import { getParentFolderPath, joinPaths } from "../path/path";
+import { join, up } from "../path/path";
 import { uuidv4 } from "../uuid/uuid";
-import { doesPathExist, ensureFolderExists, writeFile } from "./filesystem";
+import { doesPathExist, ensureFolderExists, writeFile } from "./file";
 
 export const getFirstNBytes = async (path: string, n: number): Promise<Uint8Array> => {
   if (!Number.isFinite(n) || !Number.isInteger(n) || n < 0) {
@@ -126,7 +126,7 @@ export const trashPath = async (path: string) => {
     const { __dirname } = await getCJSGlobals(import.meta);
     await new Promise((resolve, reject) => {
       execFile(
-        joinPaths(__dirname, "../__internal__/macos-trash"),
+        join(__dirname, "../__internal__/macos-trash"),
         [path],
         (error, stdout) => {
           return error ? reject(error) : resolve(stdout);
@@ -134,22 +134,22 @@ export const trashPath = async (path: string) => {
       );
     });
   } else {
-    const trashPath = joinPaths(
-      env.XDG_DATA_HOME ?? joinPaths(os.homedir(), ".local", "share"),
+    const trashPath = join(
+      env.XDG_DATA_HOME ?? join(os.homedir(), ".local", "share"),
       "Trash"
     );
-    const filesPath = joinPaths(trashPath, "files");
-    const infoPath = joinPaths(trashPath, "info");
+    const filesPath = join(trashPath, "files");
+    const infoPath = join(trashPath, "info");
     await fs.promises.mkdir(filesPath, { mode: 0o700, recursive: true });
     await fs.promises.mkdir(infoPath, { mode: 0o700, recursive: true });
     const name = uuidv4();
     await writeFile(
-      joinPaths(infoPath, `${name}.trashinfo`),
+      join(infoPath, `${name}.trashinfo`),
       `[Trash Info]\nPath=${path.replace(/\s/g, "%20")}\nDeletionDate=${new Date()
         .toISOString()
         .slice(0, 16)}`
     );
-    await move(path, joinPaths(filesPath, name), true);
+    await move(path, join(filesPath, name), true);
   }
 };
 
@@ -162,7 +162,7 @@ export const move = async (
     throw new Error(`Destination exists: ${destinationPath}`);
   }
 
-  await ensureFolderExists(getParentFolderPath(destinationPath));
+  await ensureFolderExists(up(destinationPath));
 
   await new Promise<void>((resolve, reject) => {
     fs.rename(sourcePath, destinationPath, async (error) => {

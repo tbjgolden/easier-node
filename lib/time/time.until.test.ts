@@ -1,10 +1,10 @@
 /* timers is split into multiple files to test in parallel */
-import { until } from "./timers";
+import { waitUntil } from "./time";
 
 test("until continues at a date", async () => {
   const function_ = jest.fn();
   const withDelay = async (n: number) => {
-    await until(new Date(Date.now() + n));
+    await waitUntil(new Date(Date.now() + n));
     function_();
   };
   const withDelayPromise = withDelay(15);

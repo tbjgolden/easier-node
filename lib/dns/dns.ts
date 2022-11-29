@@ -8,7 +8,7 @@ type MatchingIPs =
   | [["IPv4", string], ["IPv6", string]]
   | [["IPv6", string], ["IPv4", string]];
 
-export const dnsLookup = async (url: string): Promise<MatchingIPs> => {
+export const lookup = async (url: string): Promise<MatchingIPs> => {
   const { hostname } = parseURL(url);
 
   let hasFoundIPv4 = false;
@@ -32,7 +32,7 @@ export const dnsLookup = async (url: string): Promise<MatchingIPs> => {
   return matches as MatchingIPs;
 };
 
-export const dnsResolve = (url: string): Promise<dns.AnyRecord[]> => {
+export const resolve = (url: string): Promise<dns.AnyRecord[]> => {
   const { hostname } = parseURL(url);
   return dns.promises.resolveAny(hostname);
 };

@@ -1,4 +1,4 @@
-import { resolvePaths } from "../path/path";
+import { resolve } from "../path/path";
 
 export const getCJSGlobals = async (importMeta: ImportMeta) => {
   const { fileURLToPath } = await import("node:url");
@@ -6,7 +6,7 @@ export const getCJSGlobals = async (importMeta: ImportMeta) => {
   const Module = module_ as Partial<typeof module_> | undefined;
 
   const __filename = fileURLToPath(importMeta.url);
-  const __dirname = resolvePaths(fileURLToPath(new URL(".", importMeta.url)));
+  const __dirname = resolve(fileURLToPath(new URL(".", importMeta.url)));
 
   return {
     __dirname,

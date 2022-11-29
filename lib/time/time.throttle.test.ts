@@ -1,5 +1,5 @@
 /* timers is split into multiple files to test in parallel */
-import { createThrottledFunction } from "./timers";
+import { createThrottledFunction } from "./time";
 
 test("createThrottledFunction creates a throttled function", async () => {
   const function_ = jest.fn();

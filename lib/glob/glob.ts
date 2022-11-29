@@ -1,15 +1,15 @@
-import { ensurePathEndsWithSlash, getNormalizedPath } from "../path/path";
-import { escapeStringForRegex } from "../regex/regex";
+import { ensureSlash, normalize } from "../path/path";
+import { escape } from "../rege/rege";
 
 const GLOBSTAR_REGEX = /(^|\/)\\\*\\\*(?:\/|$)/;
 const WILDCARD_REGEX = /\\\*/;
 const SET_REGEX = /\\{(.*)?(\\})/;
 
-export const globToRegex = (glob: string, basePath = process.cwd()): RegExp => {
+export const toRegex = (glob: string, basePath = process.cwd()): RegExp => {
   // features:
   // relative / absolute based on start of glob
   const isAbsolute = glob.startsWith("/");
-  let regexSource = escapeStringForRegex(getNormalizedPath(glob));
+  let regexSource = escape(normalize(glob));
   // ** = globstar (must not have adjacent char besides a /)
   let globstarMatch = regexSource.match(GLOBSTAR_REGEX);
   while (globstarMatch !== null) {
@@ -57,11 +57,6 @@ export const globToRegex = (glob: string, basePath = process.cwd()): RegExp => {
   }
 
   return new RegExp(
-    "^" +
-      (isAbsolute
-        ? ""
-        : escapeStringForRegex(ensurePathEndsWithSlash(getNormalizedPath(basePath)))) +
-      regexSource +
-      "$"
+    "^" + (isAbsolute ? "" : escape(ensureSlash(normalize(basePath)))) + regexSource + "$"
   );
 };

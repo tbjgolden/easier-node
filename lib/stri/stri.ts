@@ -1,7 +1,7 @@
-/* ! Adapted from https://mths.be/esrever v0.2.0 by @mathias */
-
+import * as net from "node:net";
 import { inspect, InspectOptions } from "node:util";
 
+/* ! Adapted from https://mths.be/esrever v0.2.0 by @mathias */
 const regexSymbolWithCombiningMarks =
   // eslint-disable-next-line no-misleading-character-class
   /([\0-\u02FF\u0370-\u1AAF\u1B00-\u1DBF\u1E00-\u20CF\u2100-\uD7FF\uE000-\uFE1F\uFE30-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])([\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]+)/g;
@@ -93,4 +93,36 @@ export const print = (...input: unknown[]): void => {
       })
       .join(" ")
   );
+};
+
+export const isIP = (string: string): boolean => {
+  return net.isIP(string) !== 0;
+};
+
+export const isIPv4 = (string: string): boolean => {
+  return net.isIPv4(string);
+};
+
+export const isIPv6 = (string: string): boolean => {
+  return net.isIPv6(string);
+};
+
+export const isThisCharEscaped = (
+  jsonString: string,
+  quotePosition: number,
+  escapeString = "\\"
+): boolean => {
+  if (escapeString.length === 0) {
+    throw new Error("escapeString must be non-empty");
+  }
+
+  let index = quotePosition - 1;
+  let backslashCount = 0;
+
+  while (jsonString.slice(index + 1 - escapeString.length, index + 1) === escapeString) {
+    index -= escapeString.length;
+    backslashCount += 1;
+  }
+
+  return backslashCount % 2 === 1;
 };

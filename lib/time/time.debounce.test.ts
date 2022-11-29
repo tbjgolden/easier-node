@@ -1,5 +1,5 @@
 /* timers is split into multiple files to test in parallel */
-import { createDebouncedFunction } from "./timers";
+import { createDebouncedFunction } from "./time";
 
 test("createDebouncedFunction creates a debounced function", async () => {
   const function_ = jest.fn();

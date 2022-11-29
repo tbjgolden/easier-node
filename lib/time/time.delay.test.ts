@@ -1,5 +1,5 @@
 /* timers is split into multiple files to test in parallel */
-import { delay } from "./timers";
+import { delay } from "./time";
 
 test("delay delays", async () => {
   const function_ = jest.fn();

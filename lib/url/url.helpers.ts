@@ -129,7 +129,7 @@ interface Options {
   readonly removeTrailingSlash: boolean;
 
   /**
-   * Remove a sole `/` pathname in the output. This option is independant of `removeTrailingSlash`.
+   * Remove a sole `/` pathname in the output. This option is independent of `removeTrailingSlash`.
    * @default true
    */
   readonly removeSingleSlash: boolean;

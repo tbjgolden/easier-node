@@ -1,52 +1,21 @@
-import { isEscaped } from "./json.helpers";
+import { isThisCharEscaped } from "../stri/stri";
 
 export type JSONPrimitive = string | number | boolean | null;
-
-/** Deliberately does not allow primitives at the top level */
 export type JSONData =
   | {
       [key: string]: JSONData | JSONPrimitive;
     }
   | Array<JSONData | JSONPrimitive>;
 
-/**
- * same as JSON.parse, but reads comments
- * @example
- * // returns { "unicorn": "cake" }
- * readJSON(`{
- *   // Rainbows
- *   "unicorn": "cake"
- * }`)
- * */
-export const readJSON = <T = unknown>(jsonString: string): T => {
-  return JSON.parse(removeJSONComments(jsonString));
+export const parse = <T = unknown>(jsonString: string): T => {
+  return JSON.parse(stripComments(jsonString));
 };
 
-/**
- * same as JSON.stringify
- * @example
- * // returns "{\"unicorn\":\"cake\"}"
- * writeJSON({
- *   // Rainbows
- *   "unicorn": "cake"
- * })
- * */
-export const writeJSON = <T extends JSONData>(jsonString: T): string => {
+export const stringify = <T extends JSONData>(jsonString: T): string => {
   return JSON.stringify(jsonString);
 };
 
-/**
- * same as removeJSONComments from a JSON string
- * some JSON config files allow comments
- *
- * @example
- * // returns "html, body, div, span, [...]"
- * await removeJSONComments(`{
- *   // Rainbows
- *   "unicorn": "cake"
- * }`)
- * */
-export const removeJSONComments = (jsonString: string): string => {
+export const stripComments = (jsonString: string): string => {
   let isInsideString = false;
   let isInsideComment: 0 | 1 | 2 = 0;
   let offset = 0;
@@ -56,7 +25,11 @@ export const removeJSONComments = (jsonString: string): string => {
     const currentCharacter = jsonString[index];
     const nextCharacter = jsonString[index + 1];
 
-    if (!isInsideComment && currentCharacter === '"' && !isEscaped(jsonString, index)) {
+    if (
+      !isInsideComment &&
+      currentCharacter === '"' &&
+      !isThisCharEscaped(jsonString, index)
+    ) {
       isInsideString = !isInsideString;
     }
 

@@ -9,7 +9,7 @@ import {
   toHexString,
   toPrettyString,
   toUTF8String,
-} from "./string";
+} from "./stri";
 
 for (const { description, input, expected } of REVERSE_TESTS) {
   test(`reverseString: ${description}`, () => {
