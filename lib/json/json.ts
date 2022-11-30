@@ -43,7 +43,6 @@ export const stripComments = (jsonString: string): string => {
       isInsideComment = 1;
       index += 1;
     } else if (isInsideComment === 1 && currentCharacter + nextCharacter === "\r\n") {
-      index += 1;
       isInsideComment = 0;
       result = String(result);
       offset = index;

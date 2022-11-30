@@ -21,4 +21,5 @@ test("toRegex", () => {
   expect(toRegex(`./**/{.keep,.*.tmp}`).test(process.cwd() + "/.keep.temp")).toBe(false);
   expect(toRegex(`./**/{.keep,.*.tmp}`).test(process.cwd() + "/.keep.tmp")).toBe(true);
   expect(toRegex(`./**/{.keep,.*.tmp}`).test(process.cwd() + "/a/.hi.tmp")).toBe(true);
+  expect(toRegex(`/**/{*.tmp}`).test("/home/a/.hi.tmp")).toBe(true);
 });

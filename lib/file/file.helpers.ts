@@ -1,7 +1,6 @@
 import { execFile } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
-import nodePath from "node:path";
 import { env, platform } from "node:process";
 
 import { getCJSGlobals } from "../__internal__/commonjs";
@@ -113,12 +112,13 @@ export const getLastNBytes = async (path: string, n: number): Promise<Uint8Array
 };
 
 export const trashPath = async (path: string) => {
-  await new Promise((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     fs.lstat(path, (error) => {
-      if (error !== null && error.code !== "ENOENT") {
-        return reject(error);
+      if (error?.code === "ENOENT") {
+        reject(error);
+      } else {
+        resolve();
       }
-      resolve(nodePath.resolve(path));
     });
   });
 
@@ -134,12 +134,12 @@ export const trashPath = async (path: string) => {
       );
     });
   } else {
-    const trashPath = join(
+    const linuxTrashPath = join(
       env.XDG_DATA_HOME ?? join(os.homedir(), ".local", "share"),
       "Trash"
     );
-    const filesPath = join(trashPath, "files");
-    const infoPath = join(trashPath, "info");
+    const filesPath = join(linuxTrashPath, "files");
+    const infoPath = join(linuxTrashPath, "info");
     await fs.promises.mkdir(filesPath, { mode: 0o700, recursive: true });
     await fs.promises.mkdir(infoPath, { mode: 0o700, recursive: true });
     const name = uuidv4();
@@ -156,7 +156,7 @@ export const trashPath = async (path: string) => {
 export const move = async (
   sourcePath: string,
   destinationPath: string,
-  shouldOverwrite: boolean
+  shouldOverwrite = true
 ) => {
   if (!shouldOverwrite && (await doesPathExist(destinationPath))) {
     throw new Error(`Destination exists: ${destinationPath}`);

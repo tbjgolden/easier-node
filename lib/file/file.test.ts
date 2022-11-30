@@ -42,6 +42,7 @@ import {
   writeFile,
   writeJSONFile,
 } from "./file";
+import { getFirstNBytes, getLastNBytes, move, trashPath } from "./file.helpers";
 
 const sandbox = "lib/__fixtures__/sandbox";
 let startTime = Date.now() - 100;
@@ -167,4 +168,104 @@ test("misc others", async () => {
       return value.slice(resolve(sandbox).length + 1);
     })
   ).toEqual(["c", "e", "f"]);
+});
+
+test("coverage", async () => {
+  await writeFile(`${sandbox}/bytes.txt`, "0123456789");
+  await writeFile(`${sandbox}/empty.txt`, "");
+  await writeFile(`${sandbox}/nonreadable.txt`, "abc");
+  await fs.chmod(`${sandbox}/nonreadable.txt`, 0o333);
+  await fs.mkdir(`${sandbox}/dir`);
+  await expect(() => getFirstNBytes(`${sandbox}/bytes.txt`, -1)).rejects.toThrow();
+  expect(await getFirstNBytes(`${sandbox}/bytes.txt`, 0)).toEqual(new Uint8Array([]));
+  await expect(() => getFirstNBytes(`${sandbox}/not-a-real-file`, 1)).rejects.toThrow();
+  expect(await getFirstNBytes(`${sandbox}/bytes.txt`, 1)).toEqual(new Uint8Array([48]));
+  expect(await getFirstNBytes(`${sandbox}/empty.txt`, 1)).toEqual(new Uint8Array([]));
+  await expect(() => getFirstNBytes(`${sandbox}/nonreadable.txt`, 1)).rejects.toThrow();
+  await expect(() => getFirstNBytes(`${sandbox}/dir`, 1)).rejects.toThrow();
+  await expect(() => getLastNBytes(`${sandbox}/bytes.txt`, -1)).rejects.toThrow();
+  expect(await getLastNBytes(`${sandbox}/bytes.txt`, 0)).toEqual(new Uint8Array([]));
+  await expect(() => getLastNBytes(`${sandbox}/not-a-real-file`, 1)).rejects.toThrow();
+  expect(await getLastNBytes(`${sandbox}/bytes.txt`, 1)).toEqual(new Uint8Array([57]));
+  expect(await getLastNBytes(`${sandbox}/empty.txt`, 1)).toEqual(new Uint8Array([]));
+  await expect(() => getLastNBytes(`${sandbox}/nonreadable.txt`, 1)).rejects.toThrow();
+  await expect(() => getLastNBytes(`${sandbox}/dir`, 1)).rejects.toThrow();
+
+  await expect(() => trashPath(`${sandbox}/notADir`)).rejects.toThrow();
+  await trashPath(`${sandbox}/dir`);
+
+  await expect(() =>
+    move(`${sandbox}/bytes.txt`, `${sandbox}/empty.txt`, false)
+  ).rejects.toThrow();
+
+  await fs.mkdir(`${sandbox}/nonWritableDir`);
+  await fs.chmod(`${sandbox}/nonWritableDir`, 0o555);
+  await appendFile(`${sandbox}/bytes.txt`, "0");
+  expect(await readFile(`${sandbox}/bytes.txt`)).toBe("01234567890");
+  await appendFile(`${sandbox}/newfile.txt`, "0", true);
+  expect(await readFile(`${sandbox}/newfile.txt`)).toBe("0");
+  await expect(() =>
+    appendFile(`${sandbox}/nonWritableDir/newfile.txt`, "0", true)
+  ).rejects.toThrow();
+  await expect(() =>
+    appendFile(`${sandbox}/nonWritableDir`, "0", true)
+  ).rejects.toThrow();
+
+  await fs.mkdir(`${sandbox}/dir2`);
+  await writeFile(`${sandbox}/dir2/a.txt`, "rawr");
+  expect(await listFilesInFolder(`${sandbox}/dir2`, "absolute")).toEqual([
+    process.cwd() + "/lib/__fixtures__/sandbox/dir2/a.txt",
+  ]);
+  expect(await listFilesInFolder(`${sandbox}/dir2`, "relative-path")).toEqual(["a.txt"]);
+  expect(await listFilesInFolder(`${sandbox}/dir2`, "relative-cwd")).toEqual([
+    "lib/__fixtures__/sandbox/dir2/a.txt",
+  ]);
+
+  await expect(() => listFolderContents(`${sandbox}/invalidPath`)).rejects.toThrow();
+  expect((await listFolderContents(`${sandbox}/dir2`, "absolute")).files).toEqual([
+    process.cwd() + "/lib/__fixtures__/sandbox/dir2/a.txt",
+  ]);
+  expect((await listFolderContents(`${sandbox}/dir2`, "relative-path")).files).toEqual([
+    "a.txt",
+  ]);
+  expect((await listFolderContents(`${sandbox}/dir2`, "relative-cwd")).files).toEqual([
+    "lib/__fixtures__/sandbox/dir2/a.txt",
+  ]);
+
+  expect(await listFilesWithinFolder(`${sandbox}/dir2`, "absolute")).toEqual([
+    process.cwd() + "/lib/__fixtures__/sandbox/dir2/a.txt",
+  ]);
+  expect(await listFilesWithinFolder(`${sandbox}/dir2`, "relative-path")).toEqual([
+    "a.txt",
+  ]);
+  expect(await listFilesWithinFolder(`${sandbox}/dir2`, "relative-cwd")).toEqual([
+    "lib/__fixtures__/sandbox/dir2/a.txt",
+  ]);
+
+  await fs.mkdir(`${sandbox}/dir2/b`);
+  expect(await listFoldersWithinFolder(`${sandbox}/dir2`, "absolute")).toEqual([
+    process.cwd() + "/lib/__fixtures__/sandbox/dir2/b",
+  ]);
+  expect(await listFoldersWithinFolder(`${sandbox}/dir2`, "relative-path")).toEqual([
+    "b",
+  ]);
+  expect(await listFoldersWithinFolder(`${sandbox}/dir2`, "relative-cwd")).toEqual([
+    "lib/__fixtures__/sandbox/dir2/b",
+  ]);
+
+  await expect(moveFile(`${sandbox}/dir2/b`, `${sandbox}/dir2/c`)).rejects.toThrow();
+  await expect(
+    moveFolder(`${sandbox}/dir2/a.txt`, `${sandbox}/dir2/d`)
+  ).rejects.toThrow();
+
+  await expect(emptyFolder(`${sandbox}/dir2/a.txt`)).rejects.toThrow();
+  await fs.symlink("baa", `${sandbox}/dir2/symlink`);
+  await fs.mkdir(`${sandbox}/dir2/dir3`);
+  await emptyFolder(`${sandbox}/dir2`);
+
+  await ensureFileExists(`${sandbox}/dir2/new.txt`);
+
+  await fs.mkdir(`${sandbox}/dir2/dir3`);
+  await copyFolderContentsToFolder(`${sandbox}/dir2`, `${sandbox}/dir2.1`);
+  expect(await readFile(`${sandbox}/dir2.1/new.txt`)).toBe("");
 });

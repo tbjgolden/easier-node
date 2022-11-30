@@ -33,8 +33,7 @@ export const appendFile = async (
   if (shouldAddNewLineIfNeeded) {
     const needsNewLine = await new Promise((resolve, reject) => {
       fs.lstat(path, async (error, stats) => {
-        const errorCode = error?.code;
-        if (typeof errorCode === "string" && errorCode === "ENOENT") {
+        if (error?.code === "ENOENT") {
           try {
             await writeFile(path, "");
             return resolve(false);
@@ -68,9 +67,7 @@ type Output = "absolute" | "relative-path" | "relative-cwd";
 const filterInFolder = async (
   path: string,
   output: Output,
-  filterFunction = (_dirent: Dirent) => {
-    return true;
-  }
+  filterFunction: (dirent: Dirent) => boolean
 ): Promise<string[]> => {
   const dirents = await fs.promises.readdir(path, { withFileTypes: true });
   // eslint-disable-next-line unicorn/no-array-callback-reference
@@ -145,9 +142,7 @@ export const listFilesWithinFolder = async (
       return resolve(path, result);
     });
   } else if (output === "relative-cwd") {
-    return results.map((result) => {
-      return join(path, result);
-    });
+    return results.map((result) => join(path, result));
   } else {
     return results;
   }
@@ -176,13 +171,9 @@ export const listFoldersWithinFolder = async (
 ): Promise<string[]> => {
   const results = await recursiveListFoldersWithinFolder(path);
   if (output === "absolute") {
-    return results.map((result) => {
-      return resolve(path, result);
-    });
+    return results.map((result) => resolve(path, result));
   } else if (output === "relative-cwd") {
-    return results.map((result) => {
-      return join(path, result);
-    });
+    return results.map((result) => join(path, result));
   } else {
     return results;
   }
@@ -263,15 +254,9 @@ export const emptyFolder = async (path: string): Promise<void> => {
 
   const { files, folders, others } = await listFolderContents(path, "relative-cwd");
   await Promise.all([
-    ...files.map((file) => {
-      return deleteFile(file);
-    }),
-    ...others.map((other) => {
-      return deleteFile(other);
-    }),
-    ...folders.map((folder) => {
-      return deleteFolder(folder);
-    }),
+    ...files.map((file) => deleteFile(file)),
+    ...others.map((other) => deleteFile(other)),
+    ...folders.map((folder) => deleteFolder(folder)),
   ]);
 };
 
