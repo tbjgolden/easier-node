@@ -1,5 +1,5 @@
 import { ensureSlash, normalize } from "../path/path";
-import { escape } from "../rege/rege";
+import { escape } from "../regu/regu";
 
 const GLOBSTAR_REGEX = /(^|\/)\\\*\\\*(?:\/|$)/;
 const WILDCARD_REGEX = /\\\*/;

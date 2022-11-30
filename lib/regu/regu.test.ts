@@ -1,4 +1,4 @@
-import { escape } from "./rege";
+import { escape } from "./regu";
 
 test("escape", () => {
   expect(escape(`///`)).toBe("///");

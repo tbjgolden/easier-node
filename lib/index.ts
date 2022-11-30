@@ -7,7 +7,7 @@ export * as file from "./file/file";
 export * as glob from "./glob/glob";
 export * as json from "./json/json";
 export * as path from "./path/path";
-export * as rege from "./rege/rege";
+export * as regu from "./regu/regu";
 export * as stri from "./stri/stri";
 export * as time from "./time/time";
 export * as url from "./url/url";
