@@ -1,27 +1,25 @@
 import dns from "node:dns";
 
-import { parse } from "../url/url";
-
 type MatchingIPs =
-  | [["IPv4", string]]
-  | [["IPv6", string]]
-  | [["IPv4", string], ["IPv6", string]]
-  | [["IPv6", string], ["IPv4", string]];
+  | [["v4", string]]
+  | [["v6", string]]
+  | [["v4", string], ["v6", string]]
+  | [["v6", string], ["v4", string]];
 
 export const lookup = async (url: string): Promise<MatchingIPs> => {
-  const { hostname } = parse(url);
-
   let hasFoundIPv4 = false;
   let hasFoundIPv6 = false;
 
-  const matches: Array<["IPv4", string] | ["IPv6", string]> = [];
-  for (const { address, family } of await dns.promises.lookup(hostname, { all: true })) {
+  const matches: Array<["v4", string] | ["v6", string]> = [];
+  for (const { address, family } of await dns.promises.lookup(new URL(url).hostname, {
+    all: true,
+  })) {
     if (!hasFoundIPv4 && family === 4) {
-      matches.push(["IPv4", address]);
+      matches.push(["v4", address]);
       hasFoundIPv4 = true;
     }
     if (!hasFoundIPv6 && family === 6) {
-      matches.push(["IPv6", address]);
+      matches.push(["v6", address]);
       hasFoundIPv6 = true;
     }
     if (hasFoundIPv4 && hasFoundIPv6) {
@@ -33,6 +31,5 @@ export const lookup = async (url: string): Promise<MatchingIPs> => {
 };
 
 export const resolve = (url: string): Promise<dns.AnyRecord[]> => {
-  const { hostname } = parse(url);
-  return dns.promises.resolveAny(hostname);
+  return dns.promises.resolveAny(new URL(url).hostname);
 };
