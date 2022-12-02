@@ -18,11 +18,6 @@ export const waitUntil = async (
   if (timestamp < now) {
     if (errorIfAlreadyPast) {
       throw new Error(`Tried to wait until ${date}, but it is in the past`);
-    } else if (errorIfAlreadyPast === undefined) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `Tried to wait until ${date}, but it is in the past, finishing immediately`
-      );
     }
     return;
   }

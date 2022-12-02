@@ -3,6 +3,7 @@ import {
   fromBase64,
   fromBase64URL,
   fromHex,
+  isThisCharEscaped,
   reverse,
   toBase64,
   toBase64URL,
@@ -52,4 +53,13 @@ test("toPrettyString", () => {
       a: { b: { c: { d: 4 } } },
     })
   ).toEqual(`{\n  a: { b: { c: { d: 4 } } }\n}`);
+});
+
+test("isThisCharEscaped", () => {
+  expect(isThisCharEscaped("%%1", 2, "%%")).toEqual(true);
+  expect(isThisCharEscaped(String.raw`1`, 0)).toEqual(false);
+  expect(isThisCharEscaped(String.raw`\1`, 1)).toEqual(true);
+  expect(isThisCharEscaped(String.raw`\\1`, 2)).toEqual(false);
+  expect(isThisCharEscaped(String.raw`\\\1`, 3)).toEqual(true);
+  expect(() => isThisCharEscaped("%%1", 2, "")).toThrow();
 });
