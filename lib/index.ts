@@ -12,3 +12,4 @@ export * as stri from "./stri/stri";
 export * as time from "./time/time";
 export * as url from "./url/url";
 export * as uuid from "./uuid/uuid";
+export * as vali from "./vali/vali";

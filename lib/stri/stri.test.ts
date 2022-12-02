@@ -25,6 +25,12 @@ test("toBase64URLString", () => {
 });
 test("toHexString", () => {
   expect(toHex("this is a tést!")).toEqual("7468697320697320612074c3a9737421");
+  expect(toHex(Buffer.from("this is a tést!"))).toEqual(
+    "7468697320697320612074c3a9737421"
+  );
+  // eslint-disable-next-line unicorn/prefer-code-point
+  const uint8Arr = new Uint8Array([..."this is a test!"].map((c) => c.charCodeAt(0)));
+  expect(toHex(uint8Arr)).toEqual("746869732069732061207465737421");
 });
 test("toUTF8String", () => {
   expect(toUTF8(Buffer.from("this is a tést!"))).toEqual("this is a tést!");

@@ -1,4 +1,3 @@
-import * as net from "node:net";
 import { inspect, InspectOptions } from "node:util";
 
 /* ! Adapted from https://mths.be/esrever v0.2.0 by @mathias */
@@ -83,18 +82,6 @@ export const toPretty = (input: unknown, options?: InspectOptions): string => {
     sorted: true,
     ...options,
   });
-};
-
-export const isIP = (string: string): boolean => {
-  return net.isIP(string) !== 0;
-};
-
-export const isIPv4 = (string: string): boolean => {
-  return net.isIPv4(string);
-};
-
-export const isIPv6 = (string: string): boolean => {
-  return net.isIPv6(string);
 };
 
 export const isThisCharEscaped = (
