@@ -1,7 +1,7 @@
 {
   "name": "easier-node",
   "description": "Node.js, but with a modern API",
-  "version": "0.0.1-beta.2",
+  "version": "0.0.1",
   "main": "./dist/index.mjs",
   "exports": {
     "import": "./dist/index.mjs"
@@ -10,7 +10,7 @@
   "license": "Apache-2.0",
   "sideEffects": false,
   "engines": {
-    "node": "^16.13.0"
+    "node": ">=16.13.0"
   },
   "os": [
     "!win32"
@@ -35,7 +35,7 @@
     "prepare": "husky install && rm -rf .git/hooks && ln -s ../.husky .git/hooks"
   },
   "devDependencies": {
-    "@commitlint/cli": "^16.2.1",
+    "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^16.2.1",
     "@sucrase/jest-plugin": "^2.2.1",
     "@swc-node/jest": "^1.5.2",
@@ -53,7 +53,7 @@
     "jest": "^28.0.0",
     "lint-staged": "^12.3.5",
     "prettier": "^2.5.1",
-    "semantic-release": "^19.0.2",
+    "semantic-release": "^24.1.1",
     "sucrase": "^3.21.0",
     "typescript": "^4.6.4",
     "xnr": "0.2.1"
