@@ -26,7 +26,7 @@
     "help:watch": "echo 'Run tests and rerun when the code changes'",
     "watch": "jest -c ./.jestrc.cjs --watch",
     "help:build": "echo 'Build library'",
-    "build": "xnrb ./lib/index.ts dist && cp -r ./lib/assets ./dist && tsc",
+    "build": "xnrb ./lib/index.ts dist && tsc && cp -r ./lib/__internal__/macos-trash ./dist/__internal__/",
     "help:lint": "echo 'Lint all files, output to stdout'",
     "lint": "eslint lib",
     "help:types": "echo 'Typecheck all TS files, output to stdout'",
